@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Viktorina</title>
+<style>
+:root{--bg:#F7F5FF;--ink:#1B1F3B;--card:#fff;--line:#D9D4F0;--sun:#FFC93C;--ok:#1FB877;--bad:#E8405F;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141733;--ink:#F3F1FF;--card:#1F2350;--line:#363B7A}}
+:root[data-theme="dark"]{--bg:#141733;--ink:#F3F1FF;--card:#1F2350;--line:#363B7A}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;display:flex;justify-content:center}
+main{width:100%;max-width:480px;padding:20px 18px 28px}
+h1{font-size:2.6rem;line-height:1;margin:32px 0 12px;font-weight:900;letter-spacing:-1px}
+p{line-height:1.5;margin:0 0 16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.big{width:100%;padding:16px;border:0;border-radius:16px;background:var(--sun);color:#1B1F3B;font-weight:800;font-size:1.1rem}
+.big:focus-visible,.opt:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.top{display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px}
+.bar{height:10px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:22px}
+.bar i{display:block;height:100%;width:100%;background:var(--sun);transition:width .1s linear}
+.q{font-size:1.4rem;font-weight:800;line-height:1.25;margin:0 0 18px;min-height:3.6em}
+.opt{display:block;width:100%;text-align:left;padding:15px 16px;margin-bottom:10px;border-radius:14px;border:2px solid var(--line);background:var(--card);font-size:1.05rem}
+.opt.ok{border-color:var(--ok);background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:var(--bad);color:#fff}
+.score{font-size:4.5rem;font-weight:900;margin:24px 0 4px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<section id="home">
+  <h1>Bilimingni sina</h1>
+  <p>10 ta savol, har biriga 15 soniya. Tez javob bersang, ko'proq ball olasan.</p>
+  <p id="best"></p>
+  <button class="big" id="start">O'yinni boshlash</button>
+</section>
+<section id="game" class="hide">
+  <div class="top"><span id="num"></span><span id="pts"></span></div>
+  <div class="bar"><i id="fill"></i></div>
+  <p class="q" id="q"></p>
+  <div id="opts"></div>
+</section>
+<section id="end" class="hide">
+  <h1>Natija</h1>
+  <div class="score" id="final"></div>
+  <p id="msg"></p>
+  <button class="big" id="again">Qayta o'ynash</button>
+</section>
+</main>
+<script>
+const Q=[
+["O'zbekiston poytaxti qaysi shahar?","Toshkent",["Samarqand","Buxoro","Xiva"]],
+["Amir Temur qaysi shaharda dafn etilgan?","Samarqand",["Toshkent","Shahrisabz","Xiva"]],
+["Quyosh tizimidagi eng katta sayyora qaysi?","Yupiter",["Saturn","Yer","Mars"]],
+["Eng katta okean qaysi?","Tinch okean",["Atlantika","Hind","Shimoliy Muz"]],
+["Suv dengiz sathida necha darajada qaynaydi?","100°C",["90°C","110°C","80°C"]],
+["Alisher Navoiy qaysi shaharda tug'ilgan?","Hirot",["Samarqand","Buxoro","Toshkent"]],
+["Orol dengizi qaysi ikki davlat hududida joylashgan?","O'zbekiston va Qozog'iston",["O'zbekiston va Turkmaniston","Qozog'iston va Qirg'iziston","Tojikiston va O'zbekiston"]],
+["Kattalar tanasida nechta suyak bor?","206",["156","312","98"]],
+["Dunyodagi eng baland tog' cho'qqisi qaysi?","Everest",["K2","Elbrus","Monblan"]],
+["Al-Xorazmiy qaysi fanning asoschilaridan biri?","Algebra",["Geologiya","Astronomiya faqat","Kimyo"]]
+];
+const $=id=>document.getElementById(id);
+const tg=window.Telegram&&window.Telegram.WebApp;
+if(tg){try{tg.ready();tg.expand()}catch(e){}}
+let best=0;
+try{best=+localStorage.getItem("viktorina_best")||0}catch(e){}
+function showBest(){$("best").textContent=best?"Eng yaxshi natija: "+best+" ball":""}
+showBest();
+let i,score,timer,left,locked;
+const T=15;
+function show(id){["home","game","end"].forEach(s=>$(s).classList.toggle("hide",s!==id))}
+function start(){i=0;score=0;show("game");next()}
+function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
+function next(){
+  if(i>=Q.length)return finish();
+  locked=false;left=T;
+  const [q,right,wrong]=Q[i];
+  $("num").textContent="Savol "+(i+1)+"/"+Q.length;
+  $("pts").textContent=score+" ball";
+  $("q").textContent=q;
+  $("opts").innerHTML="";
+  shuffle([right,...wrong]).forEach(t=>{
+    const b=document.createElement("button");
+    b.className="opt";b.textContent=t;
+    b.onclick=()=>answer(b,t===right);
+    $("opts").appendChild(b);
+  });
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    left-=0.1;$("fill").style.width=Math.max(left/T*100,0)+"%";
+    if(left<=0){clearInterval(timer);answer(null,false)}
+  },100);
+}
+function answer(btn,ok){
+  if(locked)return;locked=true;clearInterval(timer);
+  const right=Q[i][1];
+  if(ok){score+=100+Math.round(left*4)}
+  if(btn)btn.classList.add(ok?"ok":"bad");
+  [...$("opts").children].forEach(b=>{if(b.textContent===right)b.classList.add("ok")});
+  $("pts").textContent=score+" ball";
+  if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.notificationOccurred(ok?"success":"error")}catch(e){}}
+  setTimeout(()=>{i++;next()},1100);
+}
+function finish(){
+  show("end");
+  $("final").textContent=score;
+  const isBest=score>best;
+  if(isBest){best=score;try{localStorage.setItem("viktorina_best",best)}catch(e){}}
+  $("msg").textContent=isBest?"Yangi rekord!":"Rekordingiz: "+best+" ball. Yana urinib ko'ring.";
+  showBest();
+}
+$("start").onclick=start;$("again").onclick=start;
+</script>
+</body>
+</html>
