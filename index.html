@@ -1,118 +1,138 @@
 <!DOCTYPE html>
-<html lang="uz">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Viktorina</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="questions.js"></script>
 <style>
-:root{--bg:#F7F5FF;--ink:#1B1F3B;--card:#fff;--line:#D9D4F0;--sun:#FFC93C;--ok:#1FB877;--bad:#E8405F;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141733;--ink:#F3F1FF;--card:#1F2350;--line:#363B7A}}
-:root[data-theme="dark"]{--bg:#141733;--ink:#F3F1FF;--card:#1F2350;--line:#363B7A}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%}
-body{background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;display:flex;justify-content:center}
-main{width:100%;max-width:480px;padding:20px 18px 28px}
-h1{font-size:2.6rem;line-height:1;margin:32px 0 12px;font-weight:900;letter-spacing:-1px}
-p{line-height:1.5;margin:0 0 16px}
-button{font:inherit;color:inherit;cursor:pointer}
-.big{width:100%;padding:16px;border:0;border-radius:16px;background:var(--sun);color:#1B1F3B;font-weight:800;font-size:1.1rem}
-.big:focus-visible,.opt:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.top{display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px}
-.bar{height:10px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:22px}
-.bar i{display:block;height:100%;width:100%;background:var(--sun);transition:width .1s linear}
-.q{font-size:1.4rem;font-weight:800;line-height:1.25;margin:0 0 18px;min-height:3.6em}
-.opt{display:block;width:100%;text-align:left;padding:15px 16px;margin-bottom:10px;border-radius:14px;border:2px solid var(--line);background:var(--card);font-size:1.05rem}
-.opt.ok{border-color:var(--ok);background:var(--ok);color:#fff}
-.opt.bad{border-color:var(--bad);background:var(--bad);color:#fff}
-.score{font-size:4.5rem;font-weight:900;margin:24px 0 4px}
-.hide{display:none}
-</style>
-</head>
-<body>
-<main>
-<section id="home">
-  <h1>Bilimingni sina</h1>
-  <p>10 ta savol, har biriga 15 soniya. Tez javob bersang, ko'proq ball olasan.</p>
-  <p id="best"></p>
-  <button class="big" id="start">O'yinni boshlash</button>
-</section>
-<section id="game" class="hide">
-  <div class="top"><span id="num"></span><span id="pts"></span></div>
-  <div class="bar"><i id="fill"></i></div>
-  <p class="q" id="q"></p>
-  <div id="opts"></div>
-</section>
-<section id="end" class="hide">
-  <h1>Natija</h1>
-  <div class="score" id="final"></div>
-  <p id="msg"></p>
-  <button class="big" id="again">Qayta o'ynash</button>
-</section>
-</main>
+:root{--bg:#0b1230;--card:#17214a;--tx:#f4f6ff;--mu:#9aa6d6;--ac:#fbbf24;--ok:#22c55e;--no:#ef4444}
+*{box-sizing:border-box;margin:0;font-family:system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);padding:16px 16px 32px;min-height:100vh}
+h1{font-size:28px;font-weight:800}h2{font-size:17px;margin:16px 0 6px}
+.c{background:var(--card);border-radius:16px;padding:16px;margin:10px 0;font-size:18px;line-height:1.4}
+button{width:100%;border:0;border-radius:14px;padding:14px;margin:5px 0;font-size:16px;background:var(--card);color:var(--tx);transition:transform .12s}
+button:active{transform:scale(.97)}button:disabled{opacity:.4}
+.p{background:var(--ac);color:#1a1300;font-weight:800}
+.o{text-align:left;border-left:7px solid var(--c);padding:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row button{flex:1}
+.chip{width:auto!important;flex:none!important;padding:8px 14px;margin:2px}
+.sel{background:var(--ac);color:#1a1300}
+.ok{background:var(--ok)!important;color:#fff}.no{background:var(--no)!important;color:#fff}
+.bar{height:8px;background:var(--card);border-radius:4px;overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;background:var(--ac);transition:width 1s linear}
+.mu{color:var(--mu);font-size:14px}
+</style></head><body><div id="app"></div>
 <script>
-const Q=[
-["O'zbekiston poytaxti qaysi shahar?","Toshkent",["Samarqand","Buxoro","Xiva"]],
-["Amir Temur qaysi shaharda dafn etilgan?","Samarqand",["Toshkent","Shahrisabz","Xiva"]],
-["Quyosh tizimidagi eng katta sayyora qaysi?","Yupiter",["Saturn","Yer","Mars"]],
-["Eng katta okean qaysi?","Tinch okean",["Atlantika","Hind","Shimoliy Muz"]],
-["Suv dengiz sathida necha darajada qaynaydi?","100°C",["90°C","110°C","80°C"]],
-["Alisher Navoiy qaysi shaharda tug'ilgan?","Hirot",["Samarqand","Buxoro","Toshkent"]],
-["Orol dengizi qaysi ikki davlat hududida joylashgan?","O'zbekiston va Qozog'iston",["O'zbekiston va Turkmaniston","Qozog'iston va Qirg'iziston","Tojikiston va O'zbekiston"]],
-["Kattalar tanasida nechta suyak bor?","206",["156","312","98"]],
-["Dunyodagi eng baland tog' cho'qqisi qaysi?","Everest",["K2","Elbrus","Monblan"]],
-["Al-Xorazmiy qaysi fanning asoschilaridan biri?","Algebra",["Geologiya","Astronomiya faqat","Kimyo"]]
-];
-const $=id=>document.getElementById(id);
-const tg=window.Telegram&&window.Telegram.WebApp;
-if(tg){try{tg.ready();tg.expand()}catch(e){}}
-let best=0;
-try{best=+localStorage.getItem("viktorina_best")||0}catch(e){}
-function showBest(){$("best").textContent=best?"Eng yaxshi natija: "+best+" ball":""}
-showBest();
-let i,score,timer,left,locked;
-const T=15;
-function show(id){["home","game","end"].forEach(s=>$(s).classList.toggle("hide",s!==id))}
-function start(){i=0;score=0;show("game");next()}
-function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
-function next(){
-  if(i>=Q.length)return finish();
-  locked=false;left=T;
-  const [q,right,wrong]=Q[i];
-  $("num").textContent="Savol "+(i+1)+"/"+Q.length;
-  $("pts").textContent=score+" ball";
-  $("q").textContent=q;
-  $("opts").innerHTML="";
-  shuffle([right,...wrong]).forEach(t=>{
-    const b=document.createElement("button");
-    b.className="opt";b.textContent=t;
-    b.onclick=()=>answer(b,t===right);
-    $("opts").appendChild(b);
-  });
-  clearInterval(timer);
-  timer=setInterval(()=>{
-    left-=0.1;$("fill").style.width=Math.max(left/T*100,0)+"%";
-    if(left<=0){clearInterval(timer);answer(null,false)}
-  },100);
-}
-function answer(btn,ok){
-  if(locked)return;locked=true;clearInterval(timer);
-  const right=Q[i][1];
-  if(ok){score+=100+Math.round(left*4)}
-  if(btn)btn.classList.add(ok?"ok":"bad");
-  [...$("opts").children].forEach(b=>{if(b.textContent===right)b.classList.add("ok")});
-  $("pts").textContent=score+" ball";
-  if(tg&&tg.HapticFeedback){try{tg.HapticFeedback.notificationOccurred(ok?"success":"error")}catch(e){}}
-  setTimeout(()=>{i++;next()},1100);
-}
-function finish(){
-  show("end");
-  $("final").textContent=score;
-  const isBest=score>best;
-  if(isBest){best=score;try{localStorage.setItem("viktorina_best",best)}catch(e){}}
-  $("msg").textContent=isBest?"Yangi rekord!":"Rekordingiz: "+best+" ball. Yana urinib ko'ring.";
-  showBest();
-}
-$("start").onclick=start;$("again").onclick=start;
-</script>
-</body>
-</html>
+const tg=window.Telegram&&Telegram.WebApp;
+try{tg.ready();tg.expand();tg.setHeaderColor("#0b1230");tg.setBackgroundColor("#0b1230")}catch(e){}
+/* ---- SOZLAMALAR ---- */
+const FEEDBACK_URL="https://t.me/SIZNING_USERNAME"; // <- o‘zingizning Telegram username'ingizni yozing
+const FB_PROJECT="", FB_KEY=""; // <- reyting uchun Firebase ma’lumotlari (keyin to‘ldiramiz)
+const APP_LINK="https://t.me/aqlli_miya_bot/viktorina";
+/* -------------------- */
+const U=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{id:0,first_name:"Mehmon"};
+const $=id=>document.getElementById(id),app=$("app");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const vib=t=>{try{tg.HapticFeedback.notificationOccurred(t)}catch(e){}};
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const COL=["#fbbf24","#3b82f6","#a855f7","#22c55e"];
+let S={xp:0,best:0,medals:[],day:"",wk:null};
+try{Object.assign(S,JSON.parse(localStorage.getItem("vk")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("vk",JSON.stringify(S))}catch(e){}};
+const lvl=()=>Math.floor(S.xp/100)+1;
+const award=n=>{if(!S.medals.includes(n)){S.medals.push(n);save()}};
+let cat="Hammasi",G={};
+
+function home(){
+ const cats=["Hammasi",...Object.keys(Q)];
+ app.innerHTML=`<h1>🧠 Viktorina</h1>
+ <p class="mu">${esc(U.first_name)} · ${lvl()}-daraja · ${S.xp} XP · Rekord: ${S.best}</p>
+ <div class="bar"><i style="width:${S.xp%100}%"></i></div>
+ <h2>Kategoriya</h2><div class="row">${cats.map(c=>`<button class="chip ${c==cat?"sel":""}" onclick="cat='${c}';home()">${c}</button>`).join("")}</div>
+ <h2>Rejim</h2>
+ <button class="p" onclick="start('klassik')">🎯 Klassik · 10 savol</button>
+ <button onclick="start('tezkor')">⚡ Tezkor · 60 soniya</button>
+ <button onclick="start('jon')">❤️ 3 jon · xato qilmang</button>
+ <button onclick="start('kunlik')">📅 Kunlik savol · ×3 ball</button>
+ <div class="row"><button onclick="board()">🏆 Reyting</button><button onclick="medals()">🎖 Yutuqlar</button></div>
+ <button onclick="fb()">💬 Taklif yoki muammo</button>`}
+
+function fb(){tg?tg.openTelegramLink(FEEDBACK_URL):open(FEEDBACK_URL)}
+function pool(){return Object.entries(Q).filter(([k])=>cat=="Hammasi"||k==cat).flatMap(([k,v])=>v)}
+
+function start(m){
+ let p=shuf(pool());
+ if(m=="kunlik"){const d=new Date().toDateString();if(S.day==d){alert("Bugungi savolga javob berdingiz. Ertaga qaytib keling!");return}S.day=d;save();p=[shuf(Object.values(Q).flat())[0]]}
+ else if(m=="klassik")p=p.slice(0,10);
+ else p=p.concat(shuf(pool()));
+ G={m,p,i:0,sc:0,lv:m=="jon"?3:99,st:0,ok:0,h:1,s:1,lock:0,end:m=="tezkor"?Date.now()+60000:0};
+ ask()}
+
+function ask(){
+ if(G.i>=G.p.length||G.lv<1||(G.end&&Date.now()>=G.end))return fin();
+ const q=G.p[G.i],o=shuf(q.slice(1));G.q=q;G.o=o;G.t=15;G.lock=0;
+ const info=G.m=="tezkor"?`⚡ <span id="g">${Math.ceil((G.end-Date.now())/1000)} s</span>`:G.m=="klassik"?`${G.i+1}/${G.p.length}`:G.m=="jon"?"❤️".repeat(G.lv):"📅 Kunlik";
+ app.innerHTML=`<p class="mu">${info} · ⭐ ${G.sc} · 🔥 ${G.st}</p>
+ <div class="bar"><i id="b" style="width:100%"></i></div>
+ <div class="c"><b>${esc(q[0])}</b></div>
+ ${o.map((x,k)=>`<button class="o" id="o${k}" style="--c:${COL[k]}" onclick="pick(${k})">${esc(x)}</button>`).join("")}
+ <div class="row"><button id="h" onclick="half()" ${G.h?"":"disabled"}>✂️ 50/50</button><button id="s" onclick="skip()" ${G.s?"":"disabled"}>⏭ O‘tkazish</button></div>`;
+ clearInterval(G.tm);G.tm=setInterval(tick,1000)}
+
+function tick(){
+ G.t--;const b=$("b");if(b)b.style.width=G.t/15*100+"%";
+ if(G.end){if(Date.now()>=G.end){clearInterval(G.tm);return fin()}const g=$("g");if(g)g.textContent=Math.ceil((G.end-Date.now())/1000)+" s"}
+ if(G.t<=0)pick(-1)}
+
+function pick(k){
+ if(G.lock)return;G.lock=1;clearInterval(G.tm);
+ const good=k>=0&&G.o[k]==G.q[1];
+ G.o.forEach((x,j)=>{const e=$("o"+j);e.disabled=true;if(x==G.q[1])e.classList.add("ok")});
+ if(k>=0&&!good)$("o"+k).classList.add("no");
+ if(good){G.st++;G.ok++;let pt=10+G.t+Math.min(G.st,5)*2;if(G.m=="kunlik")pt*=3;G.sc+=pt;vib("success");if(G.st==5)award("🔥 5 ketma-ket javob")}
+ else{G.st=0;if(G.m=="jon")G.lv--;vib("error")}
+ G.i++;setTimeout(ask,900)}
+
+function half(){if(!G.h||G.lock)return;G.h=0;$("h").disabled=true;let n=0;G.o.forEach((x,j)=>{if(x!=G.q[1]&&n<2){n++;const e=$("o"+j);e.disabled=true;e.style.opacity=.25}})}
+function skip(){if(!G.s||G.lock)return;G.s=0;G.i++;ask()}
+
+function fin(){
+ clearInterval(G.tm);
+ const xp=Math.round(G.sc/2),nb=G.sc>S.best;S.xp+=xp;if(nb)S.best=G.sc;
+ if(G.m=="klassik"&&G.ok==G.p.length)award("💯 Mukammal natija");
+ if(G.sc>=250)award("🚀 250+ ball");
+ save();submit(G.sc);
+ app.innerHTML=`<h1>${nb?"🎉 Yangi rekord!":"✅ Tugadi"}</h1>
+ <div class="c"><b>⭐ ${G.sc} ball</b><p class="mu">To‘g‘ri javob: ${G.ok} · +${xp} XP · ${lvl()}-daraja</p></div>
+ <button class="p" onclick="share()">📤 Do‘stlarga ulashish</button>
+ <button onclick="start(G.m)">🔁 Qayta o‘ynash</button><button onclick="home()">🏠 Bosh sahifa</button>`}
+
+function share(){
+ const u="https://t.me/share/url?url="+encodeURIComponent(APP_LINK)+"&text="+encodeURIComponent(`Viktorinada ${G.sc} ball to‘pladim! Mendan o‘zib keta olasanmi?`);
+ tg?tg.openTelegramLink(u):open(u)}
+
+function medals(){
+ app.innerHTML=`<h1>🎖 Yutuqlar</h1>${S.medals.length?S.medals.map(m=>`<div class="c">${m}</div>`).join(""):'<p class="mu">Hali yutuq yo‘q. O‘ynang va yig‘ing!</p>'}<button onclick="home()">⬅️ Orqaga</button>`}
+
+/* ---- REYTING (Firebase Firestore, REST) ---- */
+const FS=()=>`https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents`;
+const wk=()=>{const d=new Date();return d.getFullYear()+"w"+Math.ceil(((d-new Date(d.getFullYear(),0,1))/864e5+1)/7)};
+async function put(col,sc){
+ try{await fetch(`${FS()}/${col}/${U.id}?key=${FB_KEY}&updateMask.fieldPaths=name&updateMask.fieldPaths=score`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({fields:{name:{stringValue:U.first_name},score:{integerValue:String(sc)}}})})}catch(e){}}
+function submit(sc){
+ if(!FB_PROJECT||!U.id)return;
+ if(!S.wk||S.wk.k!=wk())S.wk={k:wk(),b:0};
+ if(sc>S.wk.b){S.wk.b=sc;put("w"+wk(),sc)}
+ if(sc>=S.best)put("all",sc);save()}
+async function board(col){
+ col=col||"w"+wk();
+ app.innerHTML=`<h1>🏆 Reyting</h1><div class="row"><button onclick="board()">Haftalik</button><button onclick="board('all')">Umumiy</button></div><div id="bd" class="mu">Yuklanmoqda…</div><button onclick="home()">⬅️ Orqaga</button>`;
+ if(!FB_PROJECT){$("bd").textContent="Reyting tez orada ishga tushadi.";return}
+ try{
+  const r=await fetch(FS()+":runQuery?key="+FB_KEY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({structuredQuery:{from:[{collectionId:col}],orderBy:[{field:{fieldPath:"score"},direction:"DESCENDING"}],limit:10}})});
+  const L=(await r.json()).filter(x=>x.document).map(x=>x.document.fields);
+  $("bd").innerHTML=L.length?L.map((f,i)=>`<div class="c">${["🥇","🥈","🥉"][i]||(i+1)+"."} ${esc(f.name.stringValue)} — <b>${f.score.integerValue}</b></div>`).join(""):"Hozircha hech kim yo‘q. Birinchi bo‘ling!";
+ }catch(e){$("bd").textContent="Reytingni yuklab bo‘lmadi."}}
+
+home();
+</script></body></html>
