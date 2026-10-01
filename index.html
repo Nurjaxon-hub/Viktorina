@@ -497,24 +497,44 @@ button:disabled{
 const tg=window.Telegram&&Telegram.WebApp;
 
 try{
-  tg.ready();
-  tg.expand();
-  tg.setHeaderColor("#080b18");
-  tg.setBackgroundColor("#080b18");
+  if(tg){
+    tg.ready();
+    tg.expand();
+    tg.setHeaderColor("#080b18");
+    tg.setBackgroundColor("#080b18");
+  }
 }catch(e){}
+
+
+/* =========================================================
+   5-BOSQICH — FASTAPI + POSTGRESQL
+   Backend ishlamasa ham o‘yin ishlayveradi.
+   
+   Backend joylashtirilgandan keyin faqat shu manzilni yozasiz:
+   const API_URL="https://SIZNING-BACKEND-MANZILINGIZ";
+   
+   Hozir bo‘sh turgani sababli eski o‘yin buzilmaydi.
+========================================================= */
+
+const API_URL="";
+
 
 const FEEDBACK_URL="https://t.me/SIZNING_USERNAME";
 const FB_PROJECT="";
 const FB_KEY="";
 const APP_LINK="https://t.me/aqlli_miya_bot/viktorina";
 
+
 const U=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{
   id:0,
   first_name:"Mehmon"
 };
 
+
 const $=id=>document.getElementById(id);
+
 const app=$("app");
+
 
 const esc=s=>String(s).replace(
   /[&<>"']/g,
@@ -527,16 +547,170 @@ const esc=s=>String(s).replace(
   }[c])
 );
 
+
 const vib=t=>{
   try{
-    tg.HapticFeedback.notificationOccurred(t);
+    if(tg){
+      tg.HapticFeedback.notificationOccurred(t);
+    }
   }catch(e){}
 };
+
 
 const shuf=a=>
   a.map(x=>[Math.random(),x])
    .sort((a,b)=>a[0]-b[0])
    .map(x=>x[1]);
+
+
+/* =========================================================
+   5-BOSQICH — XAVFSIZ BACKEND SO‘ROVLARI
+========================================================= */
+
+async function api(path,options={}){
+
+  if(!API_URL){
+    return null;
+  }
+
+  try{
+
+    const controller=
+      new AbortController();
+
+    const timer=
+      setTimeout(
+        ()=>controller.abort(),
+        5000
+      );
+
+    const response=
+      await fetch(
+        API_URL.replace(/\/$/,"")+path,
+        {
+          ...options,
+          signal:controller.signal,
+          headers:{
+            "Content-Type":"application/json",
+            ...(options.headers||{})
+          }
+        }
+      );
+
+    clearTimeout(timer);
+
+    if(!response.ok){
+      return null;
+    }
+
+    return await response.json();
+
+  }catch(e){
+
+    return null;
+
+  }
+
+}
+
+
+/* =========================================================
+   FOYDALANUVCHINI SERVERGA RO‘YXATDAN O‘TKAZISH
+========================================================= */
+
+async function backendRegister(){
+
+  if(!U.id)return;
+
+  await api(
+    "/api/user",
+    {
+      method:"POST",
+      body:JSON.stringify({
+        telegram_id:Number(U.id),
+        first_name:U.first_name||"Mehmon",
+        username:U.username||null
+      })
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SERVERDA O‘YIN SESSIYASINI BOSHLASH
+========================================================= */
+
+async function backendStart(){
+
+  if(!U.id||!G)return;
+
+  const result=
+    await api(
+      "/api/game/start",
+      {
+        method:"POST",
+        body:JSON.stringify({
+          telegram_id:Number(U.id),
+          mode:G.m,
+          category:cat,
+          difficulty:difficulty,
+          question_count:G.p.length
+        })
+      }
+    );
+
+  if(
+    result&&
+    result.ok&&
+    result.game_id
+  ){
+
+    G.serverGameId=
+      result.game_id;
+
+  }
+
+}
+
+
+/* =========================================================
+   NATIJANI SERVERGA YUBORISH
+========================================================= */
+
+async function backendFinish(score,xp){
+
+  if(
+    !U.id||
+    !G||
+    !G.serverGameId
+  ){
+
+    return;
+
+  }
+
+  await api(
+    "/api/game/finish",
+    {
+      method:"POST",
+      body:JSON.stringify({
+        telegram_id:Number(U.id),
+        game_id:Number(G.serverGameId),
+        score:Number(score)||0,
+        correct:Number(G.ok)||0,
+        answered:Number(G.answered)||0,
+        xp:Number(xp)||0
+      })
+    }
+  );
+
+}
+
+
+/* =========================================================
+   LOCAL HOLAT
+========================================================= */
 
 let S={
   xp:0,
@@ -546,6 +720,7 @@ let S={
   wk:null
 };
 
+
 try{
   Object.assign(
     S,
@@ -553,24 +728,43 @@ try{
   );
 }catch(e){}
 
+
 const save=()=>{
   try{
-    localStorage.setItem("vk",JSON.stringify(S));
+    localStorage.setItem(
+      "vk",
+      JSON.stringify(S)
+    );
   }catch(e){}
 };
 
+
 const lvl=()=>Math.floor(S.xp/100)+1;
 
+
 const award=n=>{
+
   if(!S.medals.includes(n)){
+
     S.medals.push(n);
+
     save();
+
   }
+
 };
 
+
 let cat="Hammasi";
+
 let difficulty="orta";
+
 let questionCount=10;
+
+
+/* =========================================================
+   QIYINCHILIK
+========================================================= */
 
 const DIFFICULTY={
 
@@ -605,9 +799,9 @@ const DIFFICULTY={
 };
 
 
-/* =========================
-   O‘YIN REJIMLARI
-========================= */
+/* =========================================================
+   REJIMLAR
+========================================================= */
 
 const MODES={
 
@@ -669,9 +863,9 @@ function todayKey(){
 }
 
 
-/* =========================
+/* =========================================================
    SAVOLLAR
-========================= */
+========================================================= */
 
 function pool(){
 
@@ -688,12 +882,6 @@ function allPool(){
 
 }
 
-
-/*
-  Kunlik savol barcha foydalanuvchilar
-  uchun bir xil bo‘lishi uchun sana asosida
-  tanlanadi.
-*/
 
 function dailyQuestion(){
 
@@ -716,9 +904,9 @@ function dailyQuestion(){
 }
 
 
-/* =========================
+/* =========================================================
    BOSH SAHIFA
-========================= */
+========================================================= */
 
 function home(){
 
@@ -728,6 +916,7 @@ function home(){
   ];
 
   const progress=S.xp%100;
+
   const d=DIFFICULTY[difficulty];
 
   const pCount=pool().length;
@@ -1121,15 +1310,25 @@ function setCount(n){
 }
 
 
-/* =========================
+/* =========================================================
    TAKLIF
-========================= */
+========================================================= */
 
 function fb(){
 
   try{
 
-    tg.openTelegramLink(FEEDBACK_URL);
+    if(tg){
+
+      tg.openTelegramLink(
+        FEEDBACK_URL
+      );
+
+    }else{
+
+      open(FEEDBACK_URL);
+
+    }
 
   }catch(e){
 
@@ -1140,15 +1339,22 @@ function fb(){
 }
 
 
-/* =========================
+/* =========================================================
    O‘YINNI BOSHLASH
-========================= */
+========================================================= */
+
+let G={
+  tm:null,
+  finished:false
+};
+
 
 function start(m){
 
   clearInterval(G.tm);
 
   let source=[];
+
 
   if(m=="kategoriya"){
 
@@ -1275,19 +1481,29 @@ function start(m){
 
     started:Date.now(),
 
-    finished:false
+    finished:false,
+
+    serverGameId:null
 
   };
 
 
+  /*
+    O‘yin darhol ochiladi.
+    Serverga yozish esa orqada bajariladi.
+    Server xatosi o‘yinni buzmaydi.
+  */
+
   ask();
+
+  backendStart();
 
 }
 
 
-/* =========================
-   SAVOL KO‘RSATISH
-========================= */
+/* =========================================================
+   SAVOL
+========================================================= */
 
 function ask(){
 
@@ -1316,9 +1532,7 @@ function ask(){
   }
 
 
-  if(
-    G.lv<1
-  ){
+  if(G.lv<1){
 
     return fin();
 
@@ -1576,10 +1790,9 @@ function ask(){
 }
 
 
-/* =========================
-   TEZKOR / MARAFON UCHUN
-   SAVOLLARNI DAVOM ETTIRISH
-========================= */
+/* =========================================================
+   KO‘PROQ SAVOL
+========================================================= */
 
 function addMoreQuestions(){
 
@@ -1600,9 +1813,9 @@ function addMoreQuestions(){
 }
 
 
-/* =========================
+/* =========================================================
    TIMER
-========================= */
+========================================================= */
 
 function tick(){
 
@@ -1688,9 +1901,9 @@ function tick(){
 }
 
 
-/* =========================
+/* =========================================================
    JAVOB
-========================= */
+========================================================= */
 
 function pick(k){
 
@@ -1781,11 +1994,6 @@ function pick(k){
     }
 
 
-    /*
-      Qiyinlik ko‘paytirgichi
-      ham hisobga olinadi.
-    */
-
     points=Math.round(
       points*d.mult
     );
@@ -1840,11 +2048,6 @@ function pick(k){
     vib("error");
 
 
-    /*
-      Marafonda birinchi xato
-      o‘yinni darhol tugatadi.
-    */
-
     if(G.m=="marafon"){
 
       setTimeout(
@@ -1858,12 +2061,6 @@ function pick(k){
 
   }
 
-
-  /*
-    Tezkor rejimda umumiy 60 soniya
-    tugagan bo‘lsa, keyingi savolga
-    o‘tmaymiz.
-  */
 
   if(
     G.end&&
@@ -1891,9 +2088,9 @@ function pick(k){
 }
 
 
-/* =========================
+/* =========================================================
    50/50
-========================= */
+========================================================= */
 
 function half(){
 
@@ -1943,9 +2140,9 @@ function half(){
 }
 
 
-/* =========================
+/* =========================================================
    O‘TKAZISH
-========================= */
+========================================================= */
 
 function skip(){
 
@@ -1959,11 +2156,6 @@ function skip(){
 
   G.i++;
 
-
-  /*
-    Tezkor va marafonda
-    savol tugab qolmasligi uchun.
-  */
 
   if(
     G.i>=G.p.length&&
@@ -1983,9 +2175,9 @@ function skip(){
 }
 
 
-/* =========================
+/* =========================================================
    CHIQISH
-========================= */
+========================================================= */
 
 function confirmHome(){
 
@@ -2006,9 +2198,9 @@ function confirmHome(){
 }
 
 
-/* =========================
+/* =========================================================
    O‘YIN TUGASHI
-========================= */
+========================================================= */
 
 function fin(){
 
@@ -2019,11 +2211,6 @@ function fin(){
 
   clearInterval(G.tm);
 
-
-  /*
-    Kunlik savol faqat javob berilgandan
-    keyin ishlatilgan deb belgilanadi.
-  */
 
   if(
     G.m=="kunlik"&&
@@ -2055,12 +2242,6 @@ function fin(){
 
   }
 
-
-  /*
-    Mukammal natija faqat
-    Klassik / Kategoriya / Aralash
-    kabi cheklangan savolli rejimlarda.
-  */
 
   if(
     (
@@ -2107,11 +2288,6 @@ function fin(){
   }
 
 
-  /*
-    Marafonda 10+ ketma-ket
-    alohida yutuq.
-  */
-
   if(
     G.m=="marafon"&&
     G.ok>=10
@@ -2125,6 +2301,19 @@ function fin(){
 
 
   save();
+
+
+  /*
+    5-bosqich:
+    natija PostgreSQL serveriga yuboriladi.
+    Xatolik bo‘lsa ham natija ekranga chiqadi.
+  */
+
+  backendFinish(
+    G.sc,
+    xp
+  );
+
 
   submit(G.sc);
 
@@ -2359,9 +2548,9 @@ function fin(){
 }
 
 
-/* =========================
+/* =========================================================
    ULASHISH
-========================= */
+========================================================= */
 
 function share(){
 
@@ -2376,7 +2565,15 @@ function share(){
 
   try{
 
-    tg.openTelegramLink(u);
+    if(tg){
+
+      tg.openTelegramLink(u);
+
+    }else{
+
+      open(u);
+
+    }
 
   }catch(e){
 
@@ -2387,9 +2584,9 @@ function share(){
 }
 
 
-/* =========================
+/* =========================================================
    YUTUQLAR
-========================= */
+========================================================= */
 
 function medals(){
 
@@ -2460,9 +2657,9 @@ function medals(){
 }
 
 
-/* =========================
+/* =========================================================
    FIRESTORE
-========================= */
+========================================================= */
 
 const FS=()=>
   `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents`;
@@ -2585,9 +2782,11 @@ function submit(sc){
 }
 
 
-/* =========================
+/* =========================================================
    REYTING
-========================= */
+   Avval PostgreSQL backend tekshiriladi.
+   Ishlamasa eski Firestore ishlaydi.
+========================================================= */
 
 async function board(col){
 
@@ -2662,6 +2861,90 @@ async function board(col){
 
   `;
 
+
+  /*
+    5-bosqich:
+    PostgreSQL reytingi.
+  */
+
+  const backend=
+    await api(
+      "/api/leaderboard?limit=20"
+    );
+
+
+  if(
+    backend&&
+    backend.ok&&
+    Array.isArray(backend.items)
+  ){
+
+    const L=backend.items;
+
+
+    $("bd").innerHTML=
+      L.length
+
+      ?
+
+      L.map((f,i)=>`
+
+        <div class="card rank">
+
+          <div class="rank-num">
+
+            ${
+              i==0?"🥇":
+              i==1?"🥈":
+              i==2?"🥉":
+              (i+1)+"."
+            }
+
+          </div>
+
+
+          <div class="rank-name">
+
+            ${esc(
+              f.first_name||
+              f.username||
+              "Foydalanuvchi"
+            )}
+
+          </div>
+
+
+          <div class="rank-score">
+
+            ${Number(f.score)||0}
+
+          </div>
+
+        </div>
+
+      `).join("")
+
+      :
+
+      `
+
+        <div class="empty">
+
+          Hozircha hech kim yo‘q.
+
+        </div>
+
+      `;
+
+
+    return;
+
+  }
+
+
+  /*
+    Backend ishlamasa eski reyting.
+  */
 
   if(!FB_PROJECT){
 
@@ -2794,19 +3077,33 @@ async function board(col){
 
   }catch(e){
 
-    $("bd").textContent=
-      "Reytingni yuklab bo‘lmadi.";
+    $("bd").innerHTML=`
+
+      <div class="empty">
+
+        Reytingni yuklab bo‘lmadi.
+
+      </div>
+
+    `;
 
   }
 
 }
 
 
-/* =========================
-   BOSHLASH
-========================= */
+/* =========================================================
+   ISHGA TUSHIRISH
+========================================================= */
 
 home();
+
+/*
+  Serverga foydalanuvchini yozish.
+  Xato bo‘lsa sahifa baribir ishlaydi.
+*/
+
+backendRegister();
 
 </script>
 
