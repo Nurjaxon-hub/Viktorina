@@ -465,6 +465,21 @@ button:disabled{
   text-align:center;
 }
 
+.mode-description{
+  margin-top:10px;
+  padding:12px;
+  border-radius:14px;
+  background:rgba(59,130,246,.08);
+  color:var(--muted);
+  font-size:11px;
+  text-align:center;
+}
+
+.quick-time{
+  font-weight:900;
+  color:var(--gold);
+}
+
 @media(max-width:380px){
   .mode-grid{
     grid-template-columns:1fr;
@@ -558,6 +573,7 @@ let difficulty="orta";
 let questionCount=10;
 
 const DIFFICULTY={
+
   oson:{
     name:"🟢 Oson",
     time:30,
@@ -585,16 +601,124 @@ const DIFFICULTY={
     base:30,
     mult:3
   }
+
 };
 
-let G={};
+
+/* =========================
+   O‘YIN REJIMLARI
+========================= */
+
+const MODES={
+
+  klassik:{
+    icon:"🎯",
+    name:"Klassik",
+    info:"10 / 20 / 30 ta savol"
+  },
+
+  tezkor:{
+    icon:"⚡",
+    name:"Tezkor",
+    info:"60 soniyada maksimal savol"
+  },
+
+  marafon:{
+    icon:"🔥",
+    name:"Marafon",
+    info:"Xato qilmaguncha davom etadi"
+  },
+
+  kunlik:{
+    icon:"📅",
+    name:"Kunlik",
+    info:"Kuniga 1 ta maxsus savol"
+  },
+
+  kategoriya:{
+    icon:"🎯",
+    name:"Kategoriya",
+    info:"Tanlangan mavzu bo‘yicha"
+  },
+
+  aralash:{
+    icon:"🎲",
+    name:"Aralash",
+    info:"Barcha mavzulardan"
+  },
+
+  jon:{
+    icon:"❤️",
+    name:"3 jon",
+    info:"3 ta xatogacha o‘ynash"
+  }
+
+};
+
+
+function todayKey(){
+
+  const d=new Date();
+
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+
+}
+
+
+/* =========================
+   SAVOLLAR
+========================= */
 
 function pool(){
 
   return Object.entries(Q)
     .filter(([k])=>cat=="Hammasi"||k==cat)
     .flatMap(([k,v])=>v);
+
 }
+
+
+function allPool(){
+
+  return Object.values(Q).flat();
+
+}
+
+
+/*
+  Kunlik savol barcha foydalanuvchilar
+  uchun bir xil bo‘lishi uchun sana asosida
+  tanlanadi.
+*/
+
+function dailyQuestion(){
+
+  const p=allPool();
+
+  if(!p.length)return null;
+
+  const d=todayKey();
+
+  let n=0;
+
+  for(let i=0;i<d.length;i++){
+
+    n=(n*31+d.charCodeAt(i))>>>0;
+
+  }
+
+  return p[n%p.length];
+
+}
+
+
+/* =========================
+   BOSH SAHIFA
+========================= */
 
 function home(){
 
@@ -605,6 +729,8 @@ function home(){
 
   const progress=S.xp%100;
   const d=DIFFICULTY[difficulty];
+
+  const pCount=pool().length;
 
   app.innerHTML=`
 
@@ -677,8 +803,9 @@ function home(){
 
     <div class="section-title">
       <h2>Kategoriya</h2>
-      <span>${pool().length} ta savol</span>
+      <span>${pCount} ta savol</span>
     </div>
+
 
     <div class="categories">
 
@@ -686,7 +813,7 @@ function home(){
 
         <button
           class="chip ${c==cat?"active":""}"
-          onclick="cat='${esc(c)}';home()">
+          onclick="setCategory('${esc(c)}')">
 
           ${esc(c)}
 
@@ -701,11 +828,12 @@ function home(){
       <h2>Qiyinchilik</h2>
     </div>
 
+
     <div class="categories">
 
       <button
         class="chip ${difficulty=="oson"?"active":""}"
-        onclick="difficulty='oson';home()">
+        onclick="setDifficulty('oson')">
 
         🟢 Oson
 
@@ -713,7 +841,7 @@ function home(){
 
       <button
         class="chip ${difficulty=="orta"?"active":""}"
-        onclick="difficulty='orta';home()">
+        onclick="setDifficulty('orta')">
 
         🟡 O‘rta
 
@@ -721,7 +849,7 @@ function home(){
 
       <button
         class="chip ${difficulty=="qiyin"?"active":""}"
-        onclick="difficulty='qiyin';home()">
+        onclick="setDifficulty('qiyin')">
 
         🔴 Qiyin
 
@@ -729,7 +857,7 @@ function home(){
 
       <button
         class="chip ${difficulty=="judaqiyin"?"active":""}"
-        onclick="difficulty='judaqiyin';home()">
+        onclick="setDifficulty('judaqiyin')">
 
         🔥 Juda qiyin
 
@@ -751,11 +879,12 @@ function home(){
       <h2>Savollar soni</h2>
     </div>
 
+
     <div class="categories">
 
       <button
         class="chip ${questionCount==10?"active":""}"
-        onclick="questionCount=10;home()">
+        onclick="setCount(10)">
 
         10 ta
 
@@ -763,7 +892,7 @@ function home(){
 
       <button
         class="chip ${questionCount==20?"active":""}"
-        onclick="questionCount=20;home()">
+        onclick="setCount(20)">
 
         20 ta
 
@@ -771,7 +900,7 @@ function home(){
 
       <button
         class="chip ${questionCount==30?"active":""}"
-        onclick="questionCount=30;home()">
+        onclick="setCount(30)">
 
         30 ta
 
@@ -819,7 +948,83 @@ function home(){
         </div>
 
         <div class="mode-info">
-          60 soniyada maksimal ball
+          60 soniyada maksimal savol
+        </div>
+
+      </button>
+
+
+      <button
+        class="mode"
+        onclick="start('marafon')">
+
+        <div class="mode-icon">
+          🔥
+        </div>
+
+        <div class="mode-title">
+          Marafon
+        </div>
+
+        <div class="mode-info">
+          Xato qilmaguncha davom etadi
+        </div>
+
+      </button>
+
+
+      <button
+        class="mode"
+        onclick="start('kunlik')">
+
+        <div class="mode-icon">
+          📅
+        </div>
+
+        <div class="mode-title">
+          Kunlik
+        </div>
+
+        <div class="mode-info">
+          Kuniga 1 ta · ×3 ball
+        </div>
+
+      </button>
+
+
+      <button
+        class="mode"
+        onclick="start('kategoriya')">
+
+        <div class="mode-icon">
+          🎯
+        </div>
+
+        <div class="mode-title">
+          Kategoriya
+        </div>
+
+        <div class="mode-info">
+          ${esc(cat)} · ${questionCount} ta
+        </div>
+
+      </button>
+
+
+      <button
+        class="mode"
+        onclick="start('aralash')">
+
+        <div class="mode-icon">
+          🎲
+        </div>
+
+        <div class="mode-title">
+          Aralash
+        </div>
+
+        <div class="mode-info">
+          Barcha mavzulardan
         </div>
 
       </button>
@@ -843,24 +1048,14 @@ function home(){
 
       </button>
 
+    </div>
 
-      <button
-        class="mode"
-        onclick="start('kunlik')">
 
-        <div class="mode-icon">
-          📅
-        </div>
+    <div class="mode-description">
 
-        <div class="mode-title">
-          Kunlik
-        </div>
-
-        <div class="mode-info">
-          ×3 ball
-        </div>
-
-      </button>
+      🎮 Rejimni tanlang va o‘yinni boshlang.
+      Tezkor rejimda 60 soniya ichida,
+      Marafonda esa birinchi xatogacha o‘ynaysiz.
 
     </div>
 
@@ -902,71 +1097,144 @@ function home(){
 }
 
 
+function setCategory(c){
+
+  cat=c;
+  home();
+
+}
+
+
+function setDifficulty(d){
+
+  difficulty=d;
+  home();
+
+}
+
+
+function setCount(n){
+
+  questionCount=n;
+  home();
+
+}
+
+
+/* =========================
+   TAKLIF
+========================= */
+
 function fb(){
 
   try{
+
     tg.openTelegramLink(FEEDBACK_URL);
+
   }catch(e){
+
     open(FEEDBACK_URL);
+
   }
 
 }
 
 
+/* =========================
+   O‘YINNI BOSHLASH
+========================= */
+
 function start(m){
 
-  let p=shuf(pool());
+  clearInterval(G.tm);
 
-  if(!p.length){
-    alert("Savollar topilmadi.");
-    return;
+  let source=[];
+
+  if(m=="kategoriya"){
+
+    source=pool();
+
   }
 
+  else if(m=="aralash"){
 
-  if(m=="kunlik"){
+    source=allPool();
 
-    const d=new Date().toDateString();
+  }
 
-    if(S.day==d){
+  else if(m=="kunlik"){
+
+    if(S.day===todayKey()){
 
       alert(
-        "Bugungi savolga javob berdingiz. Ertaga qaytib keling!"
+        "Bugungi savolga allaqachon javob berdingiz. Ertaga qaytib keling!"
       );
 
       return;
+
     }
 
-    S.day=d;
+    const dq=dailyQuestion();
 
-    save();
+    if(!dq){
 
-    p=[
-      shuf(Object.values(Q).flat())[0]
-    ];
+      alert("Savol topilmadi.");
 
-  }
+      return;
 
-  else if(m=="klassik"){
+    }
 
-    p=p.slice(
-      0,
-      Math.min(questionCount,p.length)
-    );
-
-  }
-
-  else if(m=="jon"){
-
-    p=p.slice(
-      0,
-      Math.min(questionCount,p.length)
-    );
+    source=[dq];
 
   }
 
   else{
 
-    p=p.concat(shuf(pool()));
+    source=pool();
+
+  }
+
+
+  if(!source.length){
+
+    alert("Savollar topilmadi.");
+
+    return;
+
+  }
+
+
+  let p=[];
+
+
+  if(m=="kunlik"){
+
+    p=source.slice();
+
+  }
+
+
+  else if(
+    m=="klassik"||
+    m=="kategoriya"||
+    m=="aralash"||
+    m=="jon"
+  ){
+
+    p=shuf(source).slice(
+      0,
+      Math.min(questionCount,source.length)
+    );
+
+  }
+
+
+  else if(
+    m=="tezkor"||
+    m=="marafon"
+  ){
+
+    p=shuf(source);
 
   }
 
@@ -977,6 +1245,8 @@ function start(m){
 
     p:p,
 
+    source:source,
+
     i:0,
 
     sc:0,
@@ -986,6 +1256,8 @@ function start(m){
     st:0,
 
     ok:0,
+
+    answered:0,
 
     h:1,
 
@@ -999,7 +1271,11 @@ function start(m){
 
     end:m=="tezkor"
       ?Date.now()+60000
-      :0
+      :0,
+
+    started:Date.now(),
+
+    finished:false
 
   };
 
@@ -1009,12 +1285,49 @@ function start(m){
 }
 
 
+/* =========================
+   SAVOL KO‘RSATISH
+========================= */
+
 function ask(){
 
+  if(G.finished)return;
+
+
   if(
-    G.i>=G.p.length||
-    G.lv<1||
-    (G.end&&Date.now()>=G.end)
+    G.i>=G.p.length
+  ){
+
+    if(
+      G.m=="tezkor"||
+      G.m=="marafon"
+    ){
+
+      addMoreQuestions();
+
+    }
+
+    else{
+
+      return fin();
+
+    }
+
+  }
+
+
+  if(
+    G.lv<1
+  ){
+
+    return fin();
+
+  }
+
+
+  if(
+    G.end&&
+    Date.now()>=G.end
   ){
 
     return fin();
@@ -1023,6 +1336,13 @@ function ask(){
 
 
   const q=G.p[G.i];
+
+  if(!q){
+
+    return fin();
+
+  }
+
 
   const o=shuf(q.slice(1));
 
@@ -1047,17 +1367,38 @@ function ask(){
 
     info=
       `⚡ <span id="g">`+
-      `${Math.ceil((G.end-Date.now())/1000)} s`+
+      `${Math.max(
+        0,
+        Math.ceil((G.end-Date.now())/1000)
+      )} s`+
       `</span>`;
 
   }
 
+
   else if(G.m=="klassik"){
 
     info=
-      `Savol ${G.i+1}/${G.p.length}`;
+      `🎯 Savol ${G.i+1}/${G.p.length}`;
 
   }
+
+
+  else if(G.m=="kategoriya"){
+
+    info=
+      `🎯 ${esc(cat)} · ${G.i+1}/${G.p.length}`;
+
+  }
+
+
+  else if(G.m=="aralash"){
+
+    info=
+      `🎲 Savol ${G.i+1}/${G.p.length}`;
+
+  }
+
 
   else if(G.m=="jon"){
 
@@ -1066,6 +1407,15 @@ function ask(){
       ` · ${G.i+1}/${G.p.length}`;
 
   }
+
+
+  else if(G.m=="marafon"){
+
+    info=
+      `🔥 ${G.i+1}-savol`;
+
+  }
+
 
   else{
 
@@ -1101,6 +1451,40 @@ function ask(){
       </div>
 
     </div>
+
+
+    ${
+      G.m=="tezkor"
+
+      ?
+
+      `
+
+        <div
+          class="diff-info"
+          style="margin-top:0;margin-bottom:10px">
+
+          ⚡ Umumiy vaqt:
+          <span
+            id="g2"
+            class="quick-time">
+
+            ${Math.max(
+              0,
+              Math.ceil((G.end-Date.now())/1000)
+            )} soniya
+
+          </span>
+
+        </div>
+
+      `
+
+      :
+
+      ""
+
+    }
 
 
     <div class="timer">
@@ -1192,9 +1576,53 @@ function ask(){
 }
 
 
+/* =========================
+   TEZKOR / MARAFON UCHUN
+   SAVOLLARNI DAVOM ETTIRISH
+========================= */
+
+function addMoreQuestions(){
+
+  if(
+    !G.source||
+    !G.source.length
+  ){
+
+    return fin();
+
+  }
+
+
+  const more=shuf(G.source);
+
+  G.p=G.p.concat(more);
+
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
 function tick(){
 
+  if(G.finished)return;
+
+
+  if(
+    G.end&&
+    Date.now()>=G.end
+  ){
+
+    clearInterval(G.tm);
+
+    return fin();
+
+  }
+
+
   G.t--;
+
 
   const b=$("b");
 
@@ -1212,24 +1640,39 @@ function tick(){
 
   if(G.end){
 
-    if(Date.now()>=G.end){
-
-      clearInterval(G.tm);
-
-      return fin();
-
-    }
+    const remain=Math.max(
+      0,
+      Math.ceil(
+        (G.end-Date.now())/1000
+      )
+    );
 
 
     const g=$("g");
 
-
     if(g){
 
       g.textContent=
-        Math.ceil(
-          (G.end-Date.now())/1000
-        )+" s";
+        remain+" s";
+
+    }
+
+
+    const g2=$("g2");
+
+    if(g2){
+
+      g2.textContent=
+        remain+" soniya";
+
+    }
+
+
+    if(remain<=0){
+
+      clearInterval(G.tm);
+
+      return fin();
 
     }
 
@@ -1245,9 +1688,13 @@ function tick(){
 }
 
 
+/* =========================
+   JAVOB
+========================= */
+
 function pick(k){
 
-  if(G.lock)return;
+  if(G.lock||G.finished)return;
 
 
   G.lock=1;
@@ -1295,6 +1742,9 @@ function pick(k){
   }
 
 
+  G.answered++;
+
+
   if(good){
 
     G.st++;
@@ -1304,24 +1754,6 @@ function pick(k){
 
     const d=
       DIFFICULTY[difficulty];
-
-
-    /*
-      Ball tizimi:
-
-      Asosiy ball:
-      Oson       = 10
-      O‘rta      = 15
-      Qiyin      = 20
-      Juda qiyin = 30
-
-      Tezlik bonusi:
-      qolgan vaqt × 1
-
-      Ketma-ket bonus:
-      har bir ketma-ket javob +2,
-      maksimum +20
-    */
 
 
     const base=d.base;
@@ -1347,6 +1779,16 @@ function pick(k){
       points*=3;
 
     }
+
+
+    /*
+      Qiyinlik ko‘paytirgichi
+      ham hisobga olinadi.
+    */
+
+    points=Math.round(
+      points*d.mult
+    );
 
 
     G.sc+=points;
@@ -1397,6 +1839,44 @@ function pick(k){
 
     vib("error");
 
+
+    /*
+      Marafonda birinchi xato
+      o‘yinni darhol tugatadi.
+    */
+
+    if(G.m=="marafon"){
+
+      setTimeout(
+        fin,
+        600
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  /*
+    Tezkor rejimda umumiy 60 soniya
+    tugagan bo‘lsa, keyingi savolga
+    o‘tmaymiz.
+  */
+
+  if(
+    G.end&&
+    Date.now()>=G.end
+  ){
+
+    setTimeout(
+      fin,
+      600
+    );
+
+    return;
+
   }
 
 
@@ -1411,6 +1891,10 @@ function pick(k){
 }
 
 
+/* =========================
+   50/50
+========================= */
+
 function half(){
 
   if(!G.h||G.lock)return;
@@ -1419,7 +1903,13 @@ function half(){
   G.h=0;
 
 
-  $("h").disabled=true;
+  const h=$("h");
+
+  if(h){
+
+    h.disabled=true;
+
+  }
 
 
   let n=0;
@@ -1453,6 +1943,10 @@ function half(){
 }
 
 
+/* =========================
+   O‘TKAZISH
+========================= */
+
 function skip(){
 
   if(!G.s||G.lock)return;
@@ -1466,10 +1960,32 @@ function skip(){
   G.i++;
 
 
+  /*
+    Tezkor va marafonda
+    savol tugab qolmasligi uchun.
+  */
+
+  if(
+    G.i>=G.p.length&&
+    (
+      G.m=="tezkor"||
+      G.m=="marafon"
+    )
+  ){
+
+    addMoreQuestions();
+
+  }
+
+
   ask();
 
 }
 
+
+/* =========================
+   CHIQISH
+========================= */
 
 function confirmHome(){
 
@@ -1481,6 +1997,8 @@ function confirmHome(){
 
     clearInterval(G.tm);
 
+    G.finished=true;
+
     home();
 
   }
@@ -1488,9 +2006,33 @@ function confirmHome(){
 }
 
 
+/* =========================
+   O‘YIN TUGASHI
+========================= */
+
 function fin(){
 
+  if(G.finished)return;
+
+
+  G.finished=true;
+
   clearInterval(G.tm);
+
+
+  /*
+    Kunlik savol faqat javob berilgandan
+    keyin ishlatilgan deb belgilanadi.
+  */
+
+  if(
+    G.m=="kunlik"&&
+    G.answered>0
+  ){
+
+    S.day=todayKey();
+
+  }
 
 
   const xp=
@@ -1514,9 +2056,21 @@ function fin(){
   }
 
 
+  /*
+    Mukammal natija faqat
+    Klassik / Kategoriya / Aralash
+    kabi cheklangan savolli rejimlarda.
+  */
+
   if(
-    G.m=="klassik"&&
-    G.ok==G.p.length
+    (
+      G.m=="klassik"||
+      G.m=="kategoriya"||
+      G.m=="aralash"
+    )&&
+    G.answered>0&&
+    G.ok==G.answered&&
+    G.answered==G.p.length
   ){
 
     award(
@@ -1553,9 +2107,77 @@ function fin(){
   }
 
 
+  /*
+    Marafonda 10+ ketma-ket
+    alohida yutuq.
+  */
+
+  if(
+    G.m=="marafon"&&
+    G.ok>=10
+  ){
+
+    award(
+      "🔥 Marafon 10+"
+    );
+
+  }
+
+
   save();
 
   submit(G.sc);
+
+
+  const wrong=
+    Math.max(
+      0,
+      G.answered-G.ok
+    );
+
+
+  let title="O‘yin tugadi!";
+
+  let icon="🎉";
+
+
+  if(nb){
+
+    title="Yangi rekord!";
+
+    icon="🏆";
+
+  }
+
+
+  if(G.m=="marafon"){
+
+    title=
+      G.ok>0
+      ?"Marafon tugadi!"
+      :"Marafon boshlandi-yu tugadi!";
+
+    icon="🔥";
+
+  }
+
+
+  if(G.m=="kunlik"){
+
+    title="Kunlik natija!";
+
+    icon="📅";
+
+  }
+
+
+  if(G.m=="tezkor"){
+
+    title="Vaqt tugadi!";
+
+    icon="⚡";
+
+  }
 
 
   app.innerHTML=`
@@ -1564,16 +2186,14 @@ function fin(){
 
       <div class="result-icon">
 
-        ${nb?"🏆":"🎉"}
+        ${icon}
 
       </div>
 
 
       <h1>
 
-        ${nb
-          ?"Yangi rekord!"
-          :"O‘yin tugadi!"}
+        ${title}
 
       </h1>
 
@@ -1608,7 +2228,7 @@ function fin(){
         <div class="result-stat">
 
           <b>
-            ${G.p.length-G.ok}
+            ${wrong}
           </b>
 
           <span>
@@ -1663,6 +2283,52 @@ function fin(){
       </div>
 
 
+      ${
+        G.m=="marafon"
+
+        ?
+
+        `
+
+          <div class="diff-info">
+
+            🔥 Marafon:
+            ${G.ok} ta savol ketma-ket to‘g‘ri.
+
+          </div>
+
+        `
+
+        :
+
+        ""
+
+      }
+
+
+      ${
+        G.m=="tezkor"
+
+        ?
+
+        `
+
+          <div class="diff-info">
+
+            ⚡ 60 soniyada
+            ${G.answered} ta savolga javob berdingiz.
+
+          </div>
+
+        `
+
+        :
+
+        ""
+
+      }
+
+
       <button
         onclick="share()">
 
@@ -1693,6 +2359,10 @@ function fin(){
 }
 
 
+/* =========================
+   ULASHISH
+========================= */
+
 function share(){
 
   const u=
@@ -1716,6 +2386,10 @@ function share(){
 
 }
 
+
+/* =========================
+   YUTUQLAR
+========================= */
 
 function medals(){
 
@@ -1786,6 +2460,10 @@ function medals(){
 }
 
 
+/* =========================
+   FIRESTORE
+========================= */
+
 const FS=()=>
   `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents`;
 
@@ -1794,19 +2472,21 @@ const wk=()=>{
 
   const d=new Date();
 
+  const start=new Date(
+    d.getFullYear(),
+    0,
+    1
+  );
 
-  return d.getFullYear()+
-    "w"+
-    Math.ceil(
-      (
-        d-
-        new Date(
-          d.getFullYear(),
-          0,
-          1
-        )
-      )/864e5+1
-    )/7;
+  const day=
+    Math.floor(
+      (d-start)/864e5
+    )+1;
+
+  const week=
+    Math.ceil(day/7);
+
+  return d.getFullYear()+"w"+week;
 
 };
 
@@ -1904,6 +2584,10 @@ function submit(sc){
 
 }
 
+
+/* =========================
+   REYTING
+========================= */
 
 async function board(col){
 
@@ -2117,6 +2801,10 @@ async function board(col){
 
 }
 
+
+/* =========================
+   BOSHLASH
+========================= */
 
 home();
 
