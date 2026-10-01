@@ -4,742 +4,723 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Viktorina</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="questions.js"></script>
 
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f5f7;color:#111}
-button{font-family:inherit;cursor:pointer}
-.app{max-width:520px;margin:auto;min-height:100vh;padding:16px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-.logo{font-size:27px;font-weight:900}
-.xp-mini{background:#fff;border-radius:15px;padding:8px 12px;font-weight:700;box-shadow:0 3px 12px rgba(0,0,0,.06)}
-.card{background:#fff;border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 5px 20px rgba(0,0,0,.06)}
-.hero{text-align:center;padding:24px 18px}
-.hero-icon{font-size:55px}
-.hero h1{margin:8px 0 5px;font-size:30px}
-.muted{color:#777;font-size:14px}
-.section-title{font-size:17px;font-weight:800;margin:3px 0 12px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.select-btn{background:#f3f4f6;border:2px solid transparent;padding:13px 8px;border-radius:15px;font-size:14px;font-weight:700}
-.select-btn.active{border-color:#111;background:#fff}
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mode{border:0;background:#f3f4f6;border-radius:17px;padding:15px 10px;text-align:left}
-.mode.active{background:#111;color:#fff}
-.mode-icon{font-size:25px}
-.mode-name{font-weight:800;margin-top:6px}
-.mode-info{font-size:11px;opacity:.7;margin-top:4px}
-.primary{width:100%;border:0;background:#111;color:#fff;padding:16px;border-radius:17px;font-size:17px;font-weight:800}
-.secondary{width:100%;border:0;background:#eee;color:#111;padding:14px;border-radius:15px;font-size:15px;font-weight:700}
-.home-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.question-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.badge{background:#f0f0f0;border-radius:12px;padding:7px 10px;font-size:12px;font-weight:700}
-.timer{font-size:22px;font-weight:900}
-.timer.danger{color:#d00}
-.progress{width:100%;height:8px;background:#eee;border-radius:10px;overflow:hidden;margin:10px 0 18px}
-.progress-bar{height:100%;background:#111;width:0%;transition:.2s}
-.question{font-size:21px;font-weight:800;line-height:1.35;margin-bottom:17px}
-.answers{display:flex;flex-direction:column;gap:10px}
-.answer{border:2px solid #eee;background:#fff;padding:15px;border-radius:15px;text-align:left;font-size:15px;font-weight:700}
-.answer.correct{border-color:#168a45;background:#eaf8ef}
-.answer.wrong{border-color:#d22;background:#fff0f0}
-.answer.disabled{opacity:.3}
-.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.tool{border:0;background:#eee;padding:13px;border-radius:14px;font-weight:700}
-.score-line{display:flex;justify-content:space-between;margin-top:14px;font-weight:800}
-.result{text-align:center}
-.result-score{font-size:52px;font-weight:900;margin:10px 0}
-.result-stat{background:#f5f5f5;padding:12px;border-radius:14px;margin:7px 0;display:flex;justify-content:space-between}
-.level-box{text-align:center}
-.level-number{font-size:42px;font-weight:900}
-.level-progress{height:12px;background:#eee;border-radius:20px;overflow:hidden;margin:12px 0 5px}
-.level-progress-bar{height:100%;background:#111}
-.achievement-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.achievement{background:#f5f5f5;border-radius:15px;padding:12px;text-align:center}
-.achievement.locked{opacity:.35}
-.achievement-icon{font-size:29px}
-.achievement-name{font-weight:800;margin-top:4px}
-.achievement-text{font-size:11px;color:#777;margin-top:4px}
-.task{background:#f5f5f5;border-radius:15px;padding:13px;margin-top:9px}
-.task-head{display:flex;justify-content:space-between;font-weight:800}
-.task-progress{height:8px;background:#ddd;border-radius:10px;overflow:hidden;margin-top:8px}
-.task-progress div{height:100%;background:#111}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px}
-.modal{background:#fff;color:#111;width:100%;max-width:460px;max-height:90vh;overflow:auto;border-radius:24px;padding:20px}
-.modal-title{font-size:23px;font-weight:900;text-align:center;margin-bottom:15px}
-.close{width:100%;margin-top:12px;border:0;padding:14px;border-radius:15px;background:#eee;font-weight:800}
-.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:15px;z-index:10000;font-size:14px;font-weight:700;max-width:90%;text-align:center}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:Arial,sans-serif;
+  background:#f4f6fb;
+  color:#18202f;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+button{
+  border:0;
+  font:inherit;
+  cursor:pointer;
+}
+
+#app{
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  min-height:100vh;
+  padding-bottom:30px;
+}
+
+/* HOME */
+
+.header{
+  padding:22px 18px 12px;
+}
+
+.logo{
+  font-size:30px;
+  font-weight:900;
+}
+
+.logo span{
+  color:#6c5ce7;
+}
+
+.subtitle{
+  color:#7b8495;
+  margin-top:5px;
+  font-size:14px;
+}
+
+.card{
+  background:#fff;
+  border-radius:22px;
+  margin:10px 14px;
+  padding:18px;
+  box-shadow:0 5px 20px rgba(30,40,70,.07);
+}
+
+.cardTitle{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:14px;
+}
+
+.modeGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.mode{
+  padding:15px 12px;
+  background:#f2f3fa;
+  border-radius:16px;
+  text-align:left;
+  transition:.15s;
+}
+
+.mode:active{
+  transform:scale(.97);
+}
+
+.mode.active{
+  background:#6c5ce7;
+  color:#fff;
+}
+
+.mode b{
+  display:block;
+  font-size:16px;
+  margin-bottom:5px;
+}
+
+.mode small{
+  opacity:.75;
+  line-height:1.3;
+}
+
+.categoryGrid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.cat{
+  background:#eef0f7;
+  border-radius:12px;
+  padding:10px 13px;
+  font-size:13px;
+}
+
+.cat.active{
+  background:#6c5ce7;
+  color:#fff;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+.selectBox{
+  flex:1;
+  background:#f1f3f8;
+  border-radius:14px;
+  padding:12px;
+}
+
+.selectBox label{
+  display:block;
+  font-size:11px;
+  color:#7d8493;
+  margin-bottom:5px;
+}
+
+.selectBox select{
+  width:100%;
+  border:0;
+  background:transparent;
+  outline:0;
+  font-size:15px;
+  font-weight:700;
+}
+
+.startBtn{
+  width:calc(100% - 28px);
+  margin:10px 14px;
+  padding:16px;
+  border-radius:18px;
+  background:#6c5ce7;
+  color:#fff;
+  font-weight:800;
+  font-size:17px;
+  box-shadow:0 8px 20px rgba(108,92,231,.25);
+}
+
+.startBtn:active{
+  transform:scale(.98);
+}
+
+/* GAME */
+
+#game{
+  display:none;
+}
+
+.gameTop{
+  padding:16px 15px 8px;
+}
+
+.gameInfo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.progress{
+  font-weight:800;
+  font-size:14px;
+}
+
+.score{
+  font-weight:800;
+  color:#6c5ce7;
+}
+
+.timer{
+  margin-top:12px;
+  height:10px;
+  background:#e4e7ef;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.timerBar{
+  height:100%;
+  width:100%;
+  background:#6c5ce7;
+  transition:width .1s linear;
+}
+
+.questionCard{
+  background:#fff;
+  margin:12px 14px;
+  border-radius:22px;
+  padding:20px 17px;
+  box-shadow:0 5px 20px rgba(30,40,70,.07);
+}
+
+.categoryLabel{
+  color:#6c5ce7;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.question{
+  font-size:21px;
+  line-height:1.35;
+  font-weight:800;
+}
+
+.answers{
+  margin-top:18px;
+  display:grid;
+  gap:10px;
+}
+
+.answer{
+  width:100%;
+  text-align:left;
+  padding:15px;
+  border-radius:16px;
+  background:#f1f3f8;
+  font-size:15px;
+  line-height:1.3;
+  transition:.15s;
+}
+
+.answer:active{
+  transform:scale(.985);
+}
+
+.answer.correct{
+  background:#24b47e;
+  color:#fff;
+}
+
+.answer.wrong{
+  background:#ef5350;
+  color:#fff;
+}
+
+.answer.disabled{
+  pointer-events:none;
+  opacity:.7;
+}
+
+.gameActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:10px 14px;
+}
+
+.actionBtn{
+  padding:13px;
+  border-radius:15px;
+  background:#fff;
+  font-weight:700;
+  box-shadow:0 4px 15px rgba(30,40,70,.06);
+}
+
+.actionBtn:active{
+  transform:scale(.97);
+}
+
+.life{
+  color:#ef5350;
+}
+
+.streak{
+  color:#ff9800;
+}
+
+/* RESULT */
+
+.result{
+  display:none;
+  padding:30px 15px;
+  text-align:center;
+}
+
+.resultIcon{
+  font-size:58px;
+}
+
+.result h1{
+  margin:10px 0;
+}
+
+.resultScore{
+  font-size:40px;
+  font-weight:900;
+  color:#6c5ce7;
+}
+
+.resultInfo{
+  margin-top:12px;
+  color:#6d7483;
+  line-height:1.7;
+}
+
+.resultBtn{
+  width:100%;
+  margin-top:20px;
+  padding:16px;
+  border-radius:17px;
+  background:#6c5ce7;
+  color:#fff;
+  font-weight:800;
+}
+
+/* PROFILE */
+
+.profile{
+  display:none;
+  padding:18px 14px;
+}
+
+.profileCard{
+  background:#fff;
+  border-radius:22px;
+  padding:20px;
+  text-align:center;
+}
+
+.avatar{
+  width:75px;
+  height:75px;
+  margin:auto;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#6c5ce7;
+  color:#fff;
+  font-size:32px;
+  font-weight:900;
+}
+
+.profileName{
+  font-size:21px;
+  font-weight:900;
+  margin-top:10px;
+}
+
+.level{
+  color:#6c5ce7;
+  font-weight:800;
+  margin-top:5px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-top:18px;
+}
+
+.stat{
+  background:#f1f3f8;
+  border-radius:14px;
+  padding:12px 5px;
+}
+
+.stat b{
+  display:block;
+  font-size:19px;
+}
+
+.stat small{
+  color:#777f8e;
+}
+
+/* NAV */
+
+.nav{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:520px;
+  background:#fff;
+  display:flex;
+  justify-content:space-around;
+  padding:9px 5px calc(9px + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 18px rgba(20,30,60,.08);
+  z-index:50;
+}
+
+.nav button{
+  background:none;
+  color:#8a91a0;
+  font-size:12px;
+  padding:5px 20px;
+}
+
+.nav button.active{
+  color:#6c5ce7;
+  font-weight:800;
+}
+
+/* MODAL */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:100;
+  align-items:flex-end;
+  justify-content:center;
+}
+
+.modalBox{
+  width:100%;
+  max-width:520px;
+  background:#fff;
+  border-radius:24px 24px 0 0;
+  padding:22px;
+  max-height:85vh;
+  overflow:auto;
+}
+
+.modalBox h2{
+  margin-top:0;
+}
+
+.closeBtn{
+  width:100%;
+  padding:14px;
+  border-radius:15px;
+  background:#f0f1f6;
+  margin-top:15px;
+  font-weight:700;
+}
+
+/* TASKS */
+
+.task{
+  background:#f1f3f8;
+  border-radius:15px;
+  padding:13px;
+  margin-bottom:9px;
+}
+
+.task b{
+  display:block;
+}
+
+.task small{
+  color:#727987;
+}
+
+/* FEEDBACK */
+
+textarea{
+  width:100%;
+  min-height:120px;
+  resize:none;
+  border:1px solid #ddd;
+  border-radius:15px;
+  padding:13px;
+  font:inherit;
+  outline:none;
+}
+
+/* HIDDEN */
+
+.hidden{
+  display:none!important;
+}
+
 @media(max-width:360px){
-.grid,.mode-grid,.achievement-grid{grid-template-columns:1fr}
-.question{font-size:19px}
+  .modeGrid{
+    grid-template-columns:1fr;
+  }
+
+  .question{
+    font-size:19px;
+  }
 }
 </style>
 </head>
 
 <body>
-<div class="app" id="app"></div>
 
-<script>
+<div id="app">
 
-const tg=window.Telegram&&window.Telegram.WebApp;
-
-if(tg){
-  tg.ready();
-  tg.expand();
-}
-
-const U=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{
-  id:0,
-  first_name:"Mehmon"
-};
-
-const FEEDBACK_URL="https://t.me/SIZNING_USERNAME";
-const APP_LINK="https://t.me/aqlli_miya_bot/viktorina";
-
-
-/* SAVOLLAR */
-
-function getRawQuestions(){
-
-  try{
-    if(typeof questions!=="undefined" && Array.isArray(questions)){
-      return questions;
-    }
-  }catch(e){}
-
-  if(Array.isArray(window.questions)){
-    return window.questions;
-  }
-
-  if(Array.isArray(window.QUESTIONS)){
-    return window.QUESTIONS;
-  }
-
-  return [];
-}
-
-function allPool(){
-
-  const raw=getRawQuestions();
-
-  return raw.map((q,i)=>{
-
-    if(Array.isArray(q)){
-
-      return {
-        id:q.id||("q"+i),
-        q:q[0],
-        correct:q[1],
-        wrong:[q[2],q[3],q[4]],
-        category:q.category||"Umumiy"
-      };
-
-    }
-
-    return {
-      id:q.id||("q"+i),
-      q:q.question||q.q||"",
-      correct:q.correct||q.answer||"",
-      wrong:q.wrong||q.answers||[],
-      category:q.category||"Umumiy"
-    };
-
-  }).filter(q=>q.q&&q.correct);
-
-}
-
-function shuffle(arr){
-
-  const a=[...arr];
-
-  for(let i=a.length-1;i>0;i--){
-
-    const j=Math.floor(Math.random()*(i+1));
-
-    [a[i],a[j]]=[a[j],a[i]];
-
-  }
-
-  return a;
-}
-
-
-/* SAQLASH */
-
-let S={
-  xp:0,
-  best:0,
-  medals:[],
-  day:"",
-  wk:null,
-  total:0,
-  correct:0,
-  games:0,
-  streak:0,
-  maxStreak:0,
-  lastLogin:"",
-  loginStreak:0,
-  dailyBonus:"",
-  dailyDone:"",
-  tasks:{},
-  quickBest:0,
-  marathonBest:0
-};
-
-try{
-
-  const saved=localStorage.getItem("viktorina_stats");
-
-  if(saved){
-    S={...S,...JSON.parse(saved)};
-  }
-
-}catch(e){}
-
-function saveStats(){
-
-  try{
-    localStorage.setItem(
-      "viktorina_stats",
-      JSON.stringify(S)
-    );
-  }catch(e){}
-
-}
-
-
-/* DARAJA */
-
-const LEVELS=[
-  0,100,250,500,900,1400,2000,2800,3800,5000,
-  6500,8200,10000,12000,14500,17500,21000,25000,30000,36000
-];
-
-function getLevel(){
-
-  let level=1;
-
-  for(let i=0;i<LEVELS.length;i++){
-
-    if(S.xp>=LEVELS[i]){
-      level=i+1;
-    }
-
-  }
-
-  return level;
-}
-
-function getCurrentLevelXP(){
-  return LEVELS[getLevel()-1]||0;
-}
-
-function getNextLevelXP(){
-
-  const level=getLevel();
-
-  if(level<LEVELS.length){
-    return LEVELS[level];
-  }
-
-  return LEVELS[LEVELS.length-1]+5000;
-}
-
-function getLevelProgress(){
-
-  const current=getCurrentLevelXP();
-  const next=getNextLevelXP();
-
-  if(next<=current)return 100;
-
-  return Math.min(
-    100,
-    Math.max(
-      0,
-      Math.round(
-        ((S.xp-current)/(next-current))*100
-      )
-    )
-  );
-}
-
-
-/* QIYINCHILIK */
-
-const DIFFICULTY={
-
-  oson:{
-    name:"🟢 Oson",
-    time:30,
-    base:10
-  },
-
-  orta:{
-    name:"🟡 O‘rta",
-    time:20,
-    base:15
-  },
-
-  qiyin:{
-    name:"🔴 Qiyin",
-    time:15,
-    base:20
-  },
-
-  judaqiyin:{
-    name:"🔥 Juda qiyin",
-    time:10,
-    base:30
-  }
-
-};
-
-
-/* REJIMLAR */
-
-const MODES={
-
-  klassik:{
-    icon:"🎯",
-    name:"Klassik",
-    info:"10 / 20 / 30 ta savol"
-  },
-
-  tezkor:{
-    icon:"⚡",
-    name:"Tezkor",
-    info:"60 soniyada maksimal savol"
-  },
-
-  marafon:{
-    icon:"🔥",
-    name:"Marafon",
-    info:"Xato qilmaguncha davom etadi"
-  },
-
-  kunlik:{
-    icon:"📅",
-    name:"Kunlik",
-    info:"Kuniga 1 ta maxsus savol"
-  },
-
-  kategoriya:{
-    icon:"🎯",
-    name:"Kategoriya",
-    info:"Tanlangan mavzu bo‘yicha"
-  },
-
-  aralash:{
-    icon:"🎲",
-    name:"Aralash",
-    info:"Barcha mavzulardan"
-  },
-
-  jon:{
-    icon:"❤️",
-    name:"3 jon",
-    info:"3 ta xatogacha o‘ynash"
-  }
-
-};
-
-
-/* O‘YIN HOLATI */
-
-let G={
-  m:"",
-  p:[],
-  i:0,
-  sc:0,
-  xp:0,
-  correct:0,
-  answered:0,
-  streak:0,
-  maxStreak:0,
-  lives:3,
-  time:0,
-  timer:null,
-  quickTimer:null,
-  quickLeft:60,
-  ended:false,
-  half:false,
-  skipped:0,
-  category:"all",
-  difficulty:"orta"
-};
-
-
-/* TANLOVLAR */
-
-let selectedMode="klassik";
-let selectedCategory="all";
-let selectedDifficulty="orta";
-let selectedCount=10;
-
-
-/* SANA */
-
-function todayKey(){
-
-  const d=new Date();
-
-  return d.getFullYear()+"-"+
-    String(d.getMonth()+1).padStart(2,"0")+"-"+
-    String(d.getDate()).padStart(2,"0");
-
-}
-
-function dailyQuestion(){
-
-  const arr=allPool();
-
-  if(!arr.length)return null;
-
-  const key=todayKey();
-
-  let n=0;
-
-  for(let i=0;i<key.length;i++){
-    n+=key.charCodeAt(i)*(i+1);
-  }
-
-  return arr[n%arr.length];
-
-}
-
-
-/* KATEGORIYALAR */
-
-function getCategories(){
-
-  const arr=allPool();
-  const cats=[];
-
-  arr.forEach(q=>{
-
-    if(q.category&&!cats.includes(q.category)){
-      cats.push(q.category);
-    }
-
-  });
-
-  if(!cats.length){
-
-    return [
-      "Umumiy",
-      "Tarix",
-      "Geografiya",
-      "O‘zbekiston",
-      "Texnologiya",
-      "Fan",
-      "Sport",
-      "San’at va kino",
-      "Hayvonot"
-    ];
-
-  }
-
-  return cats;
-
-}
-
-
-/* TOPSHIRIQLAR */
-
-const DAILY_TASKS=[
-
-  {
-    id:"answer10",
-    icon:"🧠",
-    name:"Bilim mashqi",
-    text:"10 ta savolga javob ber",
-    goal:10,
-    reward:50
-  },
-
-  {
-    id:"correct5",
-    icon:"🎯",
-    name:"Aniq javob",
-    text:"5 ta to‘g‘ri javob ber",
-    goal:5,
-    reward:75
-  },
-
-  {
-    id:"game1",
-    icon:"🎮",
-    name:"Bir o‘yin",
-    text:"1 ta o‘yinni tugat",
-    goal:1,
-    reward:100
-  }
-
-];
-
-function prepareDailyTasks(){
-
-  const today=todayKey();
-
-  if(S.day!==today){
-
-    S.day=today;
-
-    S.tasks={
-      answer10:0,
-      correct5:0,
-      game1:0
-    };
-
-    saveStats();
-
-  }
-
-}
-
-function addTask(type,value=1){
-
-  prepareDailyTasks();
-
-  const task=DAILY_TASKS.find(
-    x=>x.id===type
-  );
-
-  if(!task)return;
-
-  if(S.tasks[type]===undefined){
-    S.tasks[type]=0;
-  }
-
-  const before=S.tasks[type];
-
-  S.tasks[type]=Math.min(
-    task.goal,
-    S.tasks[type]+value
-  );
-
-  if(
-    before<task.goal &&
-    S.tasks[type]>=task.goal
-  ){
-
-    S.xp+=task.reward;
-
-    setTimeout(()=>{
-      toast(
-        task.icon+
-        " Topshiriq bajarildi! +"+
-        task.reward+
-        " XP"
-      );
-    },100);
-
-  }
-
-  saveStats();
-
-}
-
-
-/* BONUS */
-
-function claimDailyBonus(){
-
-  const today=todayKey();
-
-  if(S.dailyBonus===today){
-
-    toast("🎁 Bugungi bonus allaqachon olindi.");
-
-    return;
-
-  }
-
-  const bonus=50+(getLevel()*10);
-
-  S.dailyBonus=today;
-  S.xp+=bonus;
-
-  checkAchievements();
-  saveStats();
-
-  toast("🎁 Kunlik bonus: +"+bonus+" XP");
-
-}
-
-
-/* YUTUQLAR */
-
-const ACHIEVEMENTS=[
-
-  {
-    id:"first",
-    icon:"🎯",
-    name:"Birinchi qadam",
-    text:"Birinchi o‘yinni tugatish",
-    check:()=>S.games>=1
-  },
-
-  {
-    id:"ten",
-    icon:"🔟",
-    name:"10 ta",
-    text:"10 ta savolga javob berish",
-    check:()=>S.total>=10
-  },
-
-  {
-    id:"fifty",
-    icon:"🏅",
-    name:"50 ta",
-    text:"50 ta savolga javob berish",
-    check:()=>S.total>=50
-  },
-
-  {
-    id:"hundred",
-    icon:"💯",
-    name:"Yuztalik",
-    text:"100 ta savolga javob berish",
-    check:()=>S.total>=100
-  },
-
-  {
-    id:"streak5",
-    icon:"🔥",
-    name:"Olov",
-    text:"5 ta ketma-ket to‘g‘ri javob",
-    check:()=>S.maxStreak>=5
-  },
-
-  {
-    id:"streak10",
-    icon:"⚡",
-    name:"Chaqmoq",
-    text:"10 ta ketma-ket to‘g‘ri javob",
-    check:()=>S.maxStreak>=10
-  },
-
-  {
-    id:"xp1000",
-    icon:"⭐",
-    name:"1000 XP",
-    text:"1000 XP yig‘ish",
-    check:()=>S.xp>=1000
-  },
-
-  {
-    id:"xp5000",
-    icon:"🌟",
-    name:"5000 XP",
-    text:"5000 XP yig‘ish",
-    check:()=>S.xp>=5000
-  },
-
-  {
-    id:"best",
-    icon:"🏆",
-    name:"Rekordchi",
-    text:"1000 ochko yig‘ish",
-    check:()=>S.best>=1000
-  }
-
-];
-
-function checkAchievements(){
-
-  ACHIEVEMENTS.forEach(a=>{
-
-    if(S.medals.includes(a.id))return;
-
-    try{
-
-      if(a.check()){
-
-        S.medals.push(a.id);
-
-        setTimeout(()=>{
-          toast(
-            a.icon+
-            " Yangi yutuq: "+
-            a.name
-          );
-        },150);
-
-      }
-
-    }catch(e){}
-
-  });
-
-  saveStats();
-
-}
-
-
-/* TOAST */
-
-function toast(text){
-
-  const old=document.querySelector(".toast");
-
-  if(old)old.remove();
-
-  const el=document.createElement("div");
-
-  el.className="toast";
-  el.textContent=text;
-
-  document.body.appendChild(el);
-
-  setTimeout(()=>{
-    el.remove();
-  },2200);
-
-}
-
-
-/* BOSH SAHIFA */
-
-function home(){
-
-  clearTimers();
-  prepareDailyTasks();
-
-  const cats=getCategories();
-
-  document.getElementById("app").innerHTML=`
+  <!-- HOME -->
+  <section id="home">
 
     <div class="header">
+      <div class="logo">Viktorina<span>+</span></div>
+      <div class="subtitle">Bilimingizni sinang va rekord o‘rnating</div>
+    </div>
 
-      <div class="logo">
-        🧠 Viktorina
+    <div class="card">
+      <div class="cardTitle">O‘yin rejimi</div>
+
+      <div class="modeGrid">
+
+        <button class="mode active" data-mode="klassik" onclick="selectMode('klassik')">
+          <b>🎯 Klassik</b>
+          <small>Tanlangan kategoriya va savollar soni</small>
+        </button>
+
+        <button class="mode" data-mode="tezkor" onclick="selectMode('tezkor')">
+          <b>⚡ Tezkor</b>
+          <small>60 soniyada imkon qadar ko‘p savol</small>
+        </button>
+
+        <button class="mode" data-mode="marafon" onclick="selectMode('marafon')">
+          <b>🏃 Marafon</b>
+          <small>Birinchi xatogacha davom etadi</small>
+        </button>
+
+        <button class="mode" data-mode="kunlik" onclick="selectMode('kunlik')">
+          <b>📅 Kunlik</b>
+          <small>Har kuni bitta maxsus savol</small>
+        </button>
+
+        <button class="mode" data-mode="kategoriya" onclick="selectMode('kategoriya')">
+          <b>📚 Kategoriya</b>
+          <small>Faqat tanlangan mavzu</small>
+        </button>
+
+        <button class="mode" data-mode="aralash" onclick="selectMode('aralash')">
+          <b>🎲 Aralash</b>
+          <small>Barcha kategoriyalardan savollar</small>
+        </button>
+
+        <button class="mode" data-mode="jon" onclick="selectMode('jon')">
+          <b>❤️ 3 jon</b>
+          <small>3 ta xatogacha o‘ynang</small>
+        </button>
+
       </div>
+    </div>
 
-      <div
-        class="xp-mini"
-        onclick="profile()">
+    <div class="card" id="settingsCard">
 
-        ⭐ ${S.xp} XP
+      <div class="cardTitle">Sozlamalar</div>
+
+      <div class="row">
+
+        <div class="selectBox">
+          <label>Savollar</label>
+          <select id="countSelect">
+            <option value="10">10 ta</option>
+            <option value="20">20 ta</option>
+            <option value="30">30 ta</option>
+          </select>
+        </div>
+
+        <div class="selectBox">
+          <label>Qiyinlik</label>
+          <select id="difficultySelect">
+            <option value="oson">Oson</option>
+            <option value="orta" selected>O‘rta</option>
+            <option value="qiyin">Qiyin</option>
+            <option value="judaqiyin">Juda qiyin</option>
+          </select>
+        </div>
 
       </div>
 
     </div>
 
+    <div class="card" id="categoryCard">
 
-    <div class="card hero">
+      <div class="cardTitle">Kategoriya</div>
 
-      <div class="hero-icon">
-        🧠
+      <div class="categoryGrid" id="categoryGrid"></div>
+
+    </div>
+
+    <button class="startBtn" onclick="startGame()">
+      ▶️ O‘yinni boshlash
+    </button>
+
+  </section>
+
+
+  <!-- GAME -->
+  <section id="game">
+
+    <div class="gameTop">
+
+      <div class="gameInfo">
+
+        <div class="progress" id="progressText">
+          1 / 10
+        </div>
+
+        <div class="score" id="scoreText">
+          ⭐ 0
+        </div>
+
+        <div class="life" id="lifeText">
+          ❤️❤️❤️
+        </div>
+
       </div>
 
-      <h1>
-        Viktorina
-      </h1>
+      <div class="timer">
+        <div class="timerBar" id="timerBar"></div>
+      </div>
 
-      <div class="muted">
-        Bilimingizni sinang va darajangizni oshiring
+    </div>
+
+
+    <div class="questionCard">
+
+      <div class="categoryLabel" id="categoryLabel">
+        Umumiy
+      </div>
+
+      <div class="question" id="questionText">
+        Savol
+      </div>
+
+      <div class="answers" id="answers"></div>
+
+    </div>
+
+
+    <div class="gameActions">
+
+      <button class="actionBtn" onclick="use5050()">
+        ✂️ 50/50
+      </button>
+
+      <button class="actionBtn" onclick="skipQuestion()">
+        ⏭️ O‘tkazish
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- RESULT -->
+  <section id="result" class="result">
+
+    <div class="resultIcon">🏆</div>
+
+    <h1>O‘yin tugadi!</h1>
+
+    <div class="resultScore" id="resultScore">
+      0
+    </div>
+
+    <div class="resultInfo" id="resultInfo"></div>
+
+    <button class="resultBtn" onclick="home()">
+      🏠 Bosh sahifaga
+    </button>
+
+  </section>
+
+
+  <!-- PROFILE -->
+  <section id="profile" class="profile">
+
+    <div class="profileCard">
+
+      <div class="avatar" id="avatar">
+        ?
+      </div>
+
+      <div class="profileName" id="profileName">
+        O‘yinchi
+      </div>
+
+      <div class="level" id="levelText">
+        1-daraja
+      </div>
+
+      <div class="stats">
+
+        <div class="stat">
+          <b id="statGames">0</b>
+          <small>O‘yin</small>
+        </div>
+
+        <div class="stat">
+          <b id="statCorrect">0</b>
+          <small>To‘g‘ri</small>
+        </div>
+
+        <div class="stat">
+          <b id="statXP">0</b>
+          <small>XP</small>
+        </div>
+
       </div>
 
     </div>
@@ -747,353 +728,664 @@ function home(){
 
     <div class="card">
 
-      <div class="section-title">
-        🎮 Rejim
-      </div>
+      <div class="cardTitle">Kunlik vazifalar</div>
 
-      <div class="mode-grid">
+      <div id="tasks"></div>
 
-        ${Object.entries(MODES).map(([id,m])=>`
+    </div>
 
-          <button
-            class="mode ${selectedMode===id?"active":""}"
-            onclick="selectMode('${id}')">
 
-            <div class="mode-icon">
-              ${m.icon}
-            </div>
+    <div class="card">
 
-            <div class="mode-name">
-              ${m.name}
-            </div>
+      <div class="cardTitle">🏅 Yutuqlar</div>
 
-            <div class="mode-info">
-              ${m.info}
-            </div>
-
-          </button>
-
-        `).join("")}
-
+      <div id="achievements">
+        Hozircha yutuqlar yo‘q.
       </div>
 
     </div>
 
 
-    ${
-      selectedMode!=="tezkor" &&
-      selectedMode!=="marafon" &&
-      selectedMode!=="kunlik"
-      ?`
+    <div class="card">
 
-      <div class="card">
+      <div class="cardTitle">💬 Fikr bildirish</div>
 
-        <div class="section-title">
-          📚 Kategoriya
-        </div>
+      <button class="startBtn" style="width:100%;margin:0" onclick="feedback()">
+        Fikr yuborish
+      </button>
 
-        <div class="grid">
+    </div>
 
-          <button
-            class="select-btn ${selectedCategory==="all"?"active":""}"
-            onclick="selectCategory('all')">
+  </section>
 
-            🎲 Barchasi
+</div>
 
-          </button>
 
-          ${cats.map(c=>`
+<!-- NAV -->
 
-            <button
-              class="select-btn ${selectedCategory===c?"active":""}"
-              onclick="selectCategoryByIndex(${cats.indexOf(c)})">
+<div class="nav">
 
-              ${c}
+  <button id="navHome" class="active" onclick="showHome()">
+    🏠<br>Bosh sahifa
+  </button>
 
-            </button>
+  <button id="navProfile" onclick="showProfile()">
+    👤<br>Profil
+  </button>
 
-          `).join("")}
+</div>
 
-        </div>
 
-      </div>
+<!-- FEEDBACK MODAL -->
 
-      `
-      :""
-    }
+<div class="modal" id="feedbackModal">
 
+  <div class="modalBox">
 
-    ${
-      selectedMode!=="kunlik"
-      ?`
+    <h2>💬 Fikr bildirish</h2>
 
-      <div class="card">
+    <textarea id="feedbackText" placeholder="Fikringizni yozing..."></textarea>
 
-        <div class="section-title">
-          ⚙️ Qiyinchilik
-        </div>
-
-        <div class="grid">
-
-          ${Object.entries(DIFFICULTY).map(([id,d])=>`
-
-            <button
-              class="select-btn ${selectedDifficulty===id?"active":""}"
-              onclick="selectDifficulty('${id}')">
-
-              ${d.name}<br>
-
-              <span class="muted">
-                ${d.time} soniya
-              </span>
-
-            </button>
-
-          `).join("")}
-
-        </div>
-
-      </div>
-
-      `
-      :""
-    }
-
-
-    ${
-      selectedMode==="klassik" ||
-      selectedMode==="kategoriya" ||
-      selectedMode==="aralash"
-      ?`
-
-      <div class="card">
-
-        <div class="section-title">
-          🔢 Savollar soni
-        </div>
-
-        <div class="grid">
-
-          ${[10,20,30].map(n=>`
-
-            <button
-              class="select-btn ${selectedCount===n?"active":""}"
-              onclick="selectCount(${n})">
-
-              ${n} ta
-
-            </button>
-
-          `).join("")}
-
-        </div>
-
-      </div>
-
-      `
-      :""
-    }
-
-
-    ${
-      selectedMode==="tezkor"
-      ?`
-
-      <div class="card" style="text-align:center">
-
-        <div style="font-size:35px">
-          ⚡
-        </div>
-
-        <b>60 soniya</b>
-
-        <div class="muted">
-          60 soniyada imkon qadar ko‘p savolga javob bering.
-        </div>
-
-      </div>
-
-      `
-      :""
-    }
-
-
-    ${
-      selectedMode==="marafon"
-      ?`
-
-      <div class="card" style="text-align:center">
-
-        <div style="font-size:35px">
-          🔥
-        </div>
-
-        <b>Xato qilmaguncha davom etadi</b>
-
-        <div class="muted">
-          Birinchi xato o‘yinni tugatadi.
-        </div>
-
-      </div>
-
-      `
-      :""
-    }
-
-
-    ${
-      selectedMode==="kunlik"
-      ?`
-
-      <div class="card" style="text-align:center">
-
-        <div style="font-size:35px">
-          📅
-        </div>
-
-        <b>Bugungi maxsus savol</b>
-
-        <div class="muted">
-          Kuniga bir marta bajariladi.
-        </div>
-
-      </div>
-
-      `
-      :""
-    }
-
-
-    <button
-      class="primary"
-      onclick="start(selectedMode)">
-
-      🚀 O‘yinni boshlash
-
+    <button class="startBtn" style="width:100%;margin:10px 0 0" onclick="sendFeedback()">
+      Yuborish
     </button>
 
+    <button class="closeBtn" onclick="closeFeedback()">
+      Yopish
+    </button>
 
-    <div style="height:10px"></div>
+  </div>
+
+</div>
 
 
-    <div class="home-buttons">
+<script>
 
-      <button
-        class="secondary"
-        onclick="profile()">
-        👤 Profil
-      </button>
+/* =========================
+   TELEGRAM
+========================= */
 
-      <button
-        class="secondary"
-        onclick="showAchievements()">
-        🏆 Yutuqlar
-      </button>
+const tg =
+  window.Telegram &&
+  window.Telegram.WebApp
+  ? window.Telegram.WebApp
+  : null;
 
-      <button
-        class="secondary"
-        onclick="showTasks()">
-        📅 Topshiriqlar
-      </button>
-
-      <button
-        class="secondary"
-        onclick="showBoard()">
-        🏅 Reyting
-      </button>
-
-      <button
-        class="secondary"
-        onclick="shareResult()">
-        📤 Ulashish
-      </button>
-
-      <button
-        class="secondary"
-        onclick="feedback()">
-        💬 Fikr bildirish
-      </button>
-
-    </div>
-
-  `;
-
+if(tg){
+  tg.ready();
+  tg.expand();
 }
 
 
-function selectCategoryByIndex(i){
+/* =========================
+   SAVOLLAR BAZASINI OLISH
+========================= */
 
-  const cats=getCategories();
+function getRawQuestions(){
 
-  if(cats[i]){
-    selectedCategory=cats[i];
+  /*
+    Sizning questions.js faylingiz:
+    
+    const Q = {
+      "Umumiy":[...],
+      "Tarix":[...],
+      ...
+    };
+
+    Shuning uchun asosiy baza Q orqali olinadi.
+  */
+
+  try{
+
+    if(typeof Q !== "undefined" &&
+       Q &&
+       typeof Q === "object"){
+
+      return Q;
+
+    }
+
+  }catch(e){}
+
+
+  /* Eski formatlarni ham qo‘llab-quvvatlash */
+
+  try{
+
+    if(typeof questions !== "undefined" &&
+       Array.isArray(questions)){
+
+      return questions;
+
+    }
+
+  }catch(e){}
+
+
+  try{
+
+    if(typeof QUESTIONS !== "undefined" &&
+       Array.isArray(QUESTIONS)){
+
+      return QUESTIONS;
+
+    }
+
+  }catch(e){}
+
+
+  if(Array.isArray(window.questions)){
+    return window.questions;
   }
 
-  home();
 
-}
+  if(Array.isArray(window.QUESTIONS)){
+    return window.QUESTIONS;
+  }
 
-function selectMode(id){
 
-  selectedMode=id;
-  home();
-
-}
-
-function selectCategory(c){
-
-  selectedCategory=c;
-  home();
-
-}
-
-function selectDifficulty(d){
-
-  selectedDifficulty=d;
-  home();
-
-}
-
-function selectCount(n){
-
-  selectedCount=n;
-  home();
+  return {};
 
 }
 
 
-/* O‘YINNI BOSHLASH */
+/* =========================
+   SAVOLLARNI YAGONA FORMATGA KELTIRISH
+========================= */
 
-function start(m){
+function allPool(){
 
-  clearTimers();
+  const raw = getRawQuestions();
 
-  G={
-    m:m,
-    p:[],
-    i:0,
-    sc:0,
-    xp:0,
-    correct:0,
-    answered:0,
-    streak:0,
-    maxStreak:0,
-    lives:3,
-    time:0,
-    timer:null,
-    quickTimer:null,
-    quickLeft:60,
-    ended:false,
-    half:false,
-    skipped:0,
-    category:selectedCategory,
-    difficulty:selectedDifficulty
-  };
+  const pool = [];
 
 
-  const all=allPool();
+  /*
+    Q obyekt bo‘lsa:
+    {
+      "Umumiy":[...],
+      "Tarix":[...]
+    }
+  */
 
-  if(!all.length){
+  if(
+    raw &&
+    typeof raw === "object" &&
+    !Array.isArray(raw)
+  ){
+
+    Object.keys(raw).forEach(category => {
+
+      const arr =
+        Array.isArray(raw[category])
+        ? raw[category]
+        : [];
+
+
+      arr.forEach((q,i) => {
+
+        if(Array.isArray(q)){
+
+          pool.push({
+
+            id:
+              q.id ||
+              ("q" + category + i),
+
+            q:q[0],
+
+            correct:q[1],
+
+            wrong:[
+              q[2],
+              q[3],
+              q[4]
+            ],
+
+            category:category
+
+          });
+
+        }
+
+        else if(
+          q &&
+          typeof q === "object"
+        ){
+
+          pool.push({
+
+            id:
+              q.id ||
+              ("q" + category + i),
+
+            q:
+              q.question ||
+              q.q ||
+              "",
+
+            correct:
+              q.correct ||
+              q.answer ||
+              "",
+
+            wrong:
+              q.wrong ||
+              q.answers ||
+              [],
+
+            category:
+              q.category ||
+              category
+
+          });
+
+        }
+
+      });
+
+    });
+
+    return pool.filter(x =>
+
+      x.q &&
+      x.correct &&
+      Array.isArray(x.wrong) &&
+      x.wrong.length >= 3
+
+    );
+
+  }
+
+
+  /* Eski oddiy massiv formati */
+
+  if(Array.isArray(raw)){
+
+    raw.forEach((q,i) => {
+
+      if(Array.isArray(q)){
+
+        pool.push({
+
+          id:
+            q.id ||
+            ("q" + i),
+
+          q:q[0],
+
+          correct:q[1],
+
+          wrong:[
+            q[2],
+            q[3],
+            q[4]
+          ],
+
+          category:
+            q.category ||
+            "Umumiy"
+
+        });
+
+      }
+
+    });
+
+  }
+
+
+  return pool.filter(x =>
+
+    x.q &&
+    x.correct &&
+    Array.isArray(x.wrong) &&
+    x.wrong.length >= 3
+
+  );
+
+}
+
+
+/* =========================
+   ARALASHTIRISH
+========================= */
+
+function shuffle(arr){
+
+  const a = [...arr];
+
+  for(
+    let i = a.length - 1;
+    i > 0;
+    i--
+  ){
+
+    const j =
+      Math.floor(
+        Math.random() * (i + 1)
+      );
+
+    [a[i],a[j]] =
+      [a[j],a[i]];
+
+  }
+
+  return a;
+
+}
+
+
+/* =========================
+   MA'LUMOTLAR
+========================= */
+
+const defaultState = {
+
+  xp:0,
+
+  games:0,
+
+  correct:0,
+
+  total:0,
+
+  best:0,
+
+  streak:0,
+
+  dailyDate:"",
+
+  dailyDone:false,
+
+  tasks:{},
+
+  achievements:[]
+
+};
+
+
+let S = loadState();
+
+
+function loadState(){
+
+  try{
+
+    const x =
+      JSON.parse(
+        localStorage.getItem(
+          "viktorina_state"
+        )
+      );
+
+    return {
+      ...defaultState,
+      ...(x || {})
+    };
+
+  }catch(e){
+
+    return {
+      ...defaultState
+    };
+
+  }
+
+}
+
+
+function saveState(){
+
+  localStorage.setItem(
+    "viktorina_state",
+    JSON.stringify(S)
+  );
+
+}
+
+
+/* =========================
+   O‘YIN HOLATI
+========================= */
+
+let G = {
+
+  m:"klassik",
+
+  category:"Barchasi",
+
+  count:10,
+
+  difficulty:"orta",
+
+  questions:[],
+
+  index:0,
+
+  sc:0,
+
+  xp:0,
+
+  correct:0,
+
+  answered:false,
+
+  time:20,
+
+  timer:null,
+
+  quickLeft:60,
+
+  lives:3,
+
+  used5050:false,
+
+  skipped:0,
+
+  streak:0
+
+};
+
+
+/* =========================
+   QIYINLIK
+========================= */
+
+const difficultyData = {
+
+  oson:{
+    time:30,
+    base:10
+  },
+
+  orta:{
+    time:20,
+    base:15
+  },
+
+  qiyin:{
+    time:15,
+    base:20
+  },
+
+  judaqiyin:{
+    time:10,
+    base:30
+  }
+
+};
+
+
+/* =========================
+   KATEGORIYALAR
+========================= */
+
+function buildCategories(){
+
+  const raw =
+    getRawQuestions();
+
+  const grid =
+    document.getElementById(
+      "categoryGrid"
+    );
+
+  if(!grid) return;
+
+  grid.innerHTML = "";
+
+  const names = [
+    "Barchasi",
+    ...Object.keys(
+      raw &&
+      typeof raw === "object" &&
+      !Array.isArray(raw)
+      ? raw
+      : {}
+    )
+  ];
+
+
+  names.forEach((name,i)=>{
+
+    const b =
+      document.createElement(
+        "button"
+      );
+
+    b.className =
+      "cat" +
+      (i===0 ? " active" : "");
+
+    b.textContent = name;
+
+    b.onclick = ()=>{
+
+      document
+        .querySelectorAll(".cat")
+        .forEach(x =>
+          x.classList.remove(
+            "active"
+          )
+        );
+
+      b.classList.add("active");
+
+      G.category = name;
+
+    };
+
+    grid.appendChild(b);
+
+  });
+
+}
+
+
+/* =========================
+   REJIM TANLASH
+========================= */
+
+function selectMode(mode){
+
+  G.m = mode;
+
+  document
+    .querySelectorAll(".mode")
+    .forEach(b => {
+
+      b.classList.toggle(
+        "active",
+        b.dataset.mode === mode
+      );
+
+    });
+
+
+  const settings =
+    document.getElementById(
+      "settingsCard"
+    );
+
+  const category =
+    document.getElementById(
+      "categoryCard"
+    );
+
+
+  /*
+    Tezkor:
+    kategoriya va savol soni kerak emas.
+  */
+
+  if(mode === "tezkor"){
+
+    settings.style.display =
+      "block";
+
+    category.style.display =
+      "block";
+
+  }
+
+
+  /*
+    Kunlik:
+    faqat bitta savol.
+  */
+
+  else if(mode === "kunlik"){
+
+    settings.style.display =
+      "none";
+
+    category.style.display =
+      "none";
+
+  }
+
+
+  /*
+    Marafon:
+    savol soni cheklanmaydi.
+  */
+
+  else if(mode === "marafon"){
+
+    settings.style.display =
+      "none";
+
+    category.style.display =
+      "block";
+
+  }
+
+
+  else{
+
+    settings.style.display =
+      "block";
+
+    category.style.display =
+      "block";
+
+  }
+
+}
+
+
+/* =========================
+   O‘YINNI BOSHLASH
+========================= */
+
+function startGame(){
+
+  const pool =
+    allPool();
+
+
+  if(!pool.length){
 
     alert(
       "Savollar topilmadi. questions.js faylini tekshiring."
@@ -1104,528 +1396,730 @@ function start(m){
   }
 
 
-  if(m==="kunlik"){
+  const count =
+    Number(
+      document.getElementById(
+        "countSelect"
+      ).value
+    );
 
-    if(S.dailyDone===todayKey()){
+
+  const difficulty =
+    document.getElementById(
+      "difficultySelect"
+    ).value;
+
+
+  let selected = [];
+
+
+  /* KUNLIK */
+
+  if(G.m === "kunlik"){
+
+    const today =
+      new Date()
+      .toISOString()
+      .slice(0,10);
+
+
+    if(
+      S.dailyDate === today &&
+      S.dailyDone
+    ){
 
       alert(
-        "📅 Bugungi savol allaqachon bajarilgan."
+        "Bugungi savolni allaqachon ishlagansiz."
       );
 
       return;
 
     }
 
-    const q=dailyQuestion();
 
-    if(q){
-      G.p=[q];
-    }
+    const dayNumber =
+      Math.floor(
+        new Date(today).getTime()
+        /
+        86400000
+      );
+
+
+    const index =
+      dayNumber % pool.length;
+
+
+    selected = [
+      pool[index]
+    ];
 
   }
 
-  else if(m==="marafon"){
 
-    let arr=
-      selectedCategory==="all"
-      ? all
-      : all.filter(
-          q=>q.category===selectedCategory
+  /* MARAFON */
+
+  else if(G.m === "marafon"){
+
+    let source =
+      pool;
+
+
+    if(
+      G.category &&
+      G.category !== "Barchasi"
+    ){
+
+      source =
+        pool.filter(
+          x =>
+            x.category ===
+            G.category
         );
 
-    G.p=shuffle(arr);
+    }
+
+
+    selected =
+      shuffle(source);
 
   }
 
-  else if(m==="tezkor"){
 
-    G.p=shuffle(all);
+  /* KATEGORIYA */
+
+  else if(
+    G.m === "kategoriya"
+  ){
+
+    let source =
+      pool.filter(
+        x =>
+          x.category ===
+          G.category
+      );
+
+
+    if(!source.length){
+
+      source = pool;
+
+    }
+
+
+    selected =
+      shuffle(source)
+      .slice(
+        0,
+        Math.min(
+          count,
+          source.length
+        )
+      );
 
   }
+
+
+  /* ARALASH */
+
+  else if(G.m === "aralash"){
+
+    selected =
+      shuffle(pool)
+      .slice(
+        0,
+        Math.min(
+          count,
+          pool.length
+        )
+      );
+
+  }
+
+
+  /* 3 JON */
+
+  else if(G.m === "jon"){
+
+    let source =
+      pool;
+
+
+    if(
+      G.category &&
+      G.category !== "Barchasi"
+    ){
+
+      source =
+        pool.filter(
+          x =>
+            x.category ===
+            G.category
+        );
+
+    }
+
+
+    selected =
+      shuffle(source)
+      .slice(
+        0,
+        Math.min(
+          count,
+          source.length
+        )
+      );
+
+  }
+
+
+  /* KLASSIK VA TEZKOR */
 
   else{
 
-    let arr=
-      selectedCategory==="all"
-      ? all
-      : all.filter(
-          q=>q.category===selectedCategory
+    let source =
+      pool;
+
+
+    if(
+      G.category &&
+      G.category !== "Barchasi"
+    ){
+
+      source =
+        pool.filter(
+          x =>
+            x.category ===
+            G.category
         );
 
-    G.p=shuffle(arr).slice(
-      0,
-      Math.min(
-        selectedCount,
-        arr.length
-      )
-    );
+    }
+
+
+    if(!source.length){
+
+      source = pool;
+
+    }
+
+
+    selected =
+      shuffle(source)
+      .slice(
+        0,
+        Math.min(
+          count,
+          source.length
+        )
+      );
 
   }
 
 
-  if(!G.p.length){
+  G.count =
+    selected.length;
 
-    alert(
-      "Bu bo‘limda savollar topilmadi."
-    );
+
+  G.difficulty =
+    difficulty;
+
+
+  G.questions =
+    selected;
+
+
+  G.index = 0;
+
+  G.sc = 0;
+
+  G.xp = 0;
+
+  G.correct = 0;
+
+  G.answered = false;
+
+  G.skipped = 0;
+
+  G.streak = 0;
+
+  G.used5050 = false;
+
+  G.lives =
+    G.m === "jon"
+    ? 3
+    : 999;
+
+
+  G.quickLeft = 60;
+
+
+  document.getElementById(
+    "home"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "profile"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "result"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "game"
+  ).style.display = "block";
+
+
+  showQuestion();
+
+}
+
+
+/* =========================
+   SAVOLNI KO‘RSATISH
+========================= */
+
+function showQuestion(){
+
+  clearInterval(
+    G.timer
+  );
+
+
+  if(
+    G.index >=
+    G.questions.length
+  ){
+
+    finishGame();
 
     return;
 
   }
 
 
-  ask();
+  G.answered = false;
 
-}
+  G.used5050 = false;
 
 
-/* SAVOL */
+  const q =
+    G.questions[G.index];
 
-function ask(){
 
-  clearTimers();
+  document.getElementById(
+    "progressText"
+  ).textContent =
+    `${G.index + 1} / ${G.questions.length}`;
 
-  if(G.ended)return;
 
+  document.getElementById(
+    "scoreText"
+  ).textContent =
+    `⭐ ${G.sc}`;
 
-  if(G.i>=G.p.length){
 
-    if(
-      G.m==="marafon" ||
-      G.m==="tezkor"
-    ){
+  document.getElementById(
+    "categoryLabel"
+  ).textContent =
+    q.category;
 
-      const all=allPool();
 
-      let arr=
-        selectedCategory==="all"
-        ? all
-        : all.filter(
-            q=>q.category===selectedCategory
-          );
+  document.getElementById(
+    "questionText"
+  ).textContent =
+    q.q;
 
-      G.p.push(...shuffle(arr));
 
-    }else{
+  updateLives();
 
-      fin();
-      return;
 
-    }
+  const answers =
+    shuffle([
+      q.correct,
+      ...q.wrong
+    ]);
 
-  }
 
+  const box =
+    document.getElementById(
+      "answers"
+    );
 
-  const q=G.p[G.i];
 
-  const d=
-    DIFFICULTY[G.difficulty]||
-    DIFFICULTY.orta;
+  box.innerHTML = "";
 
 
-  const answers=shuffle([
-    q.correct,
-    ...q.wrong
-  ].filter(Boolean));
+  answers.forEach(answer => {
 
+    const b =
+      document.createElement(
+        "button"
+      );
 
-  G.currentAnswers=answers;
 
+    b.className =
+      "answer";
 
-  document.getElementById("app").innerHTML=`
 
-    <div class="header">
+    b.textContent =
+      answer;
 
-      <div class="logo">
-        🧠 Viktorina
-      </div>
 
-      <div class="xp-mini">
-        ⭐ ${G.sc}
-      </div>
+    b.onclick = () =>
+      answerQuestion(
+        answer,
+        b
+      );
 
-    </div>
 
+    box.appendChild(b);
 
-    <div class="card">
+  });
 
-      <div class="question-top">
 
-        <div class="badge">
-
-          ${
-            G.m==="tezkor"
-            ?"⚡ TEZKOR"
-            :G.m==="marafon"
-            ?"🔥 MARAFON"
-            :G.m==="kunlik"
-            ?"📅 KUNLIK"
-            :"Savol "+(G.i+1)
-          }
-
-        </div>
-
-
-        <div
-          id="timer"
-          class="timer">
-
-          ${
-            G.m==="tezkor"
-            ?G.quickLeft
-            :d.time
-          }
-
-        </div>
-
-      </div>
-
-
-      <div class="progress">
-
-        <div
-          id="progressBar"
-          class="progress-bar"
-          style="width:${
-            G.m==="tezkor"
-            ?(G.quickLeft/60*100)
-            :(G.i/G.p.length*100)
-          }%">
-        </div>
-
-      </div>
-
-
-      <div class="question">
-        ${q.q}
-      </div>
-
-
-      <div
-        id="answers"
-        class="answers">
-
-        ${answers.map((a,i)=>`
-
-          <button
-            class="answer"
-            id="ans${i}"
-            onclick="pick(${i})">
-
-            ${a}
-
-          </button>
-
-        `).join("")}
-
-      </div>
-
-
-      <div class="tools">
-
-        <button
-          class="tool"
-          onclick="half()">
-
-          ✂️ 50/50
-
-        </button>
-
-        <button
-          class="tool"
-          onclick="skip()">
-
-          ⏭ O‘tkazish
-
-        </button>
-
-      </div>
-
-
-      ${
-        G.m==="jon"
-        ?`
-
-        <div class="score-line">
-
-          <span>
-            ❤️ Jonlar
-          </span>
-
-          <span>
-            ${"❤️".repeat(G.lives)}
-          </span>
-
-        </div>
-
-        `
-        :""
-      }
-
-
-      <div class="score-line">
-
-        <span>
-          🔥 Seriya: ${G.streak}
-        </span>
-
-        <span>
-          🏆 ${G.sc}
-        </span>
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  if(G.m==="tezkor"){
+  if(G.m === "tezkor"){
 
     startQuickTimer();
 
   }else{
 
-    startQuestionTimer(d.time);
+    startNormalTimer();
 
   }
 
 }
 
 
-/* TIMER */
+/* =========================
+   ODDIY VAQT
+========================= */
 
-function clearTimers(){
+function startNormalTimer(){
 
-  if(G.timer){
-    clearInterval(G.timer);
-    G.timer=null;
-  }
+  const d =
+    difficultyData[
+      G.difficulty
+    ] ||
+    difficultyData.orta;
 
-  if(G.quickTimer){
-    clearInterval(G.quickTimer);
-    G.quickTimer=null;
-  }
 
-}
+  G.time =
+    d.time;
 
-function startQuestionTimer(seconds){
 
-  G.time=seconds;
+  const total =
+    d.time;
 
-  const el=document.getElementById("timer");
 
-  G.timer=setInterval(()=>{
+  updateTimer(
+    G.time / total
+  );
 
-    G.time--;
 
-    if(el){
+  G.timer =
+    setInterval(()=>{
 
-      el.textContent=G.time;
+      G.time -= 0.1;
 
-      if(G.time<=5){
-        el.classList.add("danger");
+
+      updateTimer(
+        G.time / total
+      );
+
+
+      if(G.time <= 0){
+
+        clearInterval(
+          G.timer
+        );
+
+
+        timeOut();
+
       }
 
-    }
-
-    if(G.time<=0){
-
-      clearInterval(G.timer);
-
-      timeoutAnswer();
-
-    }
-
-  },1000);
+    },100);
 
 }
+
+
+/* =========================
+   TEZKOR TIMER
+========================= */
 
 function startQuickTimer(){
 
-  const el=document.getElementById("timer");
+  G.quickLeft =
+    G.quickLeft || 60;
 
-  G.quickTimer=setInterval(()=>{
 
-    G.quickLeft--;
+  updateTimer(
+    G.quickLeft / 60
+  );
 
-    if(el){
 
-      el.textContent=G.quickLeft;
+  G.timer =
+    setInterval(()=>{
 
-      if(G.quickLeft<=10){
-        el.classList.add("danger");
+      G.quickLeft -= 0.1;
+
+
+      updateTimer(
+        G.quickLeft / 60
+      );
+
+
+      if(
+        G.quickLeft <= 0
+      ){
+
+        clearInterval(
+          G.timer
+        );
+
+
+        finishGame();
+
       }
 
-    }
-
-    const bar=document.getElementById(
-      "progressBar"
-    );
-
-    if(bar){
-
-      bar.style.width=
-        Math.max(
-          0,
-          G.quickLeft/60*100
-        )+"%";
-
-    }
-
-    if(G.quickLeft<=0){
-
-      clearInterval(G.quickTimer);
-
-      fin();
-
-    }
-
-  },1000);
+    },100);
 
 }
 
 
-/* JAVOB */
+/* =========================
+   TIMER
+========================= */
 
-function pick(k){
+function updateTimer(percent){
 
-  if(G.ended)return;
-
-  clearTimers();
-
-  const buttons=
-    document.querySelectorAll(".answer");
-
-  buttons.forEach(b=>{
-    b.disabled=true;
-  });
-
-
-  const q=G.p[G.i];
-
-  const chosen=
-    G.currentAnswers[k];
-
-  const correct=
-    chosen===q.correct;
-
-
-  G.answered++;
-
-
-  buttons.forEach((b,index)=>{
-
-    if(
-      G.currentAnswers[index]===q.correct
-    ){
-
-      b.classList.add("correct");
-
-    }
-
-  });
-
-
-  if(correct){
-
-    buttons[k].classList.add("correct");
-
-    G.correct++;
-
-    G.streak++;
-
-    if(G.streak>G.maxStreak){
-      G.maxStreak=G.streak;
-    }
-
-
-    const d=
-      DIFFICULTY[G.difficulty]||
-      DIFFICULTY.orta;
-
-
-    const speedBonus=
-      Math.max(
-        0,
-        G.m==="tezkor"
-        ?Math.floor(G.quickLeft/10)
-        :G.time
-      );
-
-
-    const streakBonus=
-      Math.min(
-        20,
-        Math.max(
-          0,
-          (G.streak-1)*2
-        )
-      );
-
-
-    let points=
-      d.base+
-      speedBonus+
-      streakBonus;
-
-
-    if(G.m==="kunlik"){
-      points*=3;
-    }
-
-
-    points=Math.round(points);
-
-    G.sc+=points;
-    G.xp+=points;
-
-
-    toast(
-      "✅ To‘g‘ri! +"+
-      points+
-      " ochko"
+  const bar =
+    document.getElementById(
+      "timerBar"
     );
 
 
-    setTimeout(()=>{
-
-      G.i++;
-      G.half=false;
-
-      ask();
-
-    },500);
-
-  }
-
-  else{
-
-    buttons[k].classList.add("wrong");
-
-    G.streak=0;
+  const p =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        percent
+      )
+    );
 
 
-    if(G.m==="marafon"){
+  bar.style.width =
+    (p * 100) + "%";
 
-      toast(
-        "❌ Xato! Marafon tugadi."
+}
+
+
+/* =========================
+   VAQT TUGADI
+========================= */
+
+function timeOut(){
+
+  if(G.answered)
+    return;
+
+
+  G.answered = true;
+
+  G.streak = 0;
+
+
+  document
+    .querySelectorAll(".answer")
+    .forEach(b =>
+      b.classList.add(
+        "disabled"
+      )
+    );
+
+
+  if(G.m === "jon"){
+
+    G.lives--;
+
+    updateLives();
+
+
+    if(G.lives <= 0){
+
+      setTimeout(
+        finishGame,
+        500
       );
-
-      setTimeout(fin,600);
 
       return;
 
     }
 
+  }
 
-    if(G.m==="jon"){
+
+  setTimeout(()=>{
+
+    G.index++;
+
+    showQuestion();
+
+  },500);
+
+}
+
+
+/* =========================
+   JAVOB
+========================= */
+
+function answerQuestion(
+  answer,
+  button
+){
+
+  if(G.answered)
+    return;
+
+
+  G.answered = true;
+
+
+  clearInterval(
+    G.timer
+  );
+
+
+  const q =
+    G.questions[G.index];
+
+
+  const correct =
+    answer === q.correct;
+
+
+  document
+    .querySelectorAll(".answer")
+    .forEach(b =>
+      b.classList.add(
+        "disabled"
+      )
+    );
+
+
+  if(correct){
+
+    button.classList.add(
+      "correct"
+    );
+
+
+    G.correct++;
+
+    G.streak++;
+
+
+    const d =
+      difficultyData[
+        G.difficulty
+      ] ||
+      difficultyData.orta;
+
+
+    const speedBonus =
+      Math.max(
+        0,
+        G.m === "tezkor"
+        ? Math.floor(
+            G.quickLeft / 10
+          )
+        : Math.floor(G.time)
+      );
+
+
+    const streakBonus =
+      Math.min(
+        20,
+        Math.max(
+          0,
+          (G.streak - 1) * 2
+        )
+      );
+
+
+    let points =
+      d.base +
+      speedBonus +
+      streakBonus;
+
+
+    if(G.m === "kunlik"){
+
+      points *= 3;
+
+    }
+
+
+    points =
+      Math.round(
+        points
+      );
+
+
+    G.sc +=
+      points;
+
+
+    G.xp +=
+      points;
+
+
+  }else{
+
+    button.classList.add(
+      "wrong"
+    );
+
+
+    document
+      .querySelectorAll(".answer")
+      .forEach(b => {
+
+        if(
+          b.textContent ===
+          q.correct
+        ){
+
+          b.classList.add(
+            "correct"
+          );
+
+        }
+
+      });
+
+
+    G.streak = 0;
+
+
+    if(G.m === "jon"){
 
       G.lives--;
 
-      if(G.lives<=0){
+      updateLives();
 
-        setTimeout(fin,600);
+
+      if(G.lives <= 0){
+
+        setTimeout(
+          finishGame,
+          700
+        );
 
         return;
 
@@ -1634,77 +2128,14 @@ function pick(k){
     }
 
 
-    toast("❌ Xato!");
-
-
-    setTimeout(()=>{
-
-      G.i++;
-      G.half=false;
-
-      ask();
-
-    },600);
-
-  }
-
-}
-
-
-/* VAQT TUGASHI */
-
-function timeoutAnswer(){
-
-  if(G.ended)return;
-
-  G.answered++;
-  G.streak=0;
-
-
-  const q=G.p[G.i];
-
-  const buttons=
-    document.querySelectorAll(".answer");
-
-
-  buttons.forEach(b=>{
-    b.disabled=true;
-  });
-
-
-  buttons.forEach((b,index)=>{
-
     if(
-      G.currentAnswers[index]===q.correct
+      G.m === "marafon"
     ){
 
-      b.classList.add("correct");
-
-    }
-
-  });
-
-
-  if(G.m==="marafon"){
-
-    toast(
-      "⏰ Vaqt tugadi! Marafon tugadi."
-    );
-
-    setTimeout(fin,600);
-
-    return;
-
-  }
-
-
-  if(G.m==="jon"){
-
-    G.lives--;
-
-    if(G.lives<=0){
-
-      setTimeout(fin,600);
+      setTimeout(
+        finishGame,
+        700
+      );
 
       return;
 
@@ -1713,727 +2144,312 @@ function timeoutAnswer(){
   }
 
 
-  toast("⏰ Vaqt tugadi!");
+  document.getElementById(
+    "scoreText"
+  ).textContent =
+    `⭐ ${G.sc}`;
 
 
   setTimeout(()=>{
 
-    G.i++;
-    G.half=false;
+    G.index++;
 
-    ask();
+    showQuestion();
 
-  },600);
+  },700);
 
 }
 
 
-/* 50/50 */
+/* =========================
+   50/50
+========================= */
 
-function half(){
+function use5050(){
 
-  if(G.half){
+  if(G.answered)
+    return;
 
-    toast(
-      "✂️ Bu savolda 50/50 ishlatildi."
+
+  if(G.used5050)
+    return;
+
+
+  G.used5050 = true;
+
+
+  const q =
+    G.questions[G.index];
+
+
+  const buttons =
+    [
+      ...document
+        .querySelectorAll(
+          ".answer"
+        )
+    ];
+
+
+  const wrong =
+    buttons.filter(
+      b =>
+        b.textContent !==
+        q.correct
     );
+
+
+  shuffle(wrong)
+    .slice(0,2)
+    .forEach(b => {
+
+      b.classList.add(
+        "disabled"
+      );
+
+      b.style.visibility =
+        "hidden";
+
+    });
+
+}
+
+
+/* =========================
+   O‘TKAZISH
+========================= */
+
+function skipQuestion(){
+
+  if(G.answered)
+    return;
+
+
+  clearInterval(
+    G.timer
+  );
+
+
+  G.answered = true;
+
+  G.skipped++;
+
+
+  G.streak = 0;
+
+
+  G.index++;
+
+
+  showQuestion();
+
+}
+
+
+/* =========================
+   JONLAR
+========================= */
+
+function updateLives(){
+
+  const el =
+    document.getElementById(
+      "lifeText"
+    );
+
+
+  if(G.m !== "jon"){
+
+    el.textContent = "";
 
     return;
 
   }
 
-  G.half=true;
 
-
-  const q=G.p[G.i];
-
-  const buttons=
-    document.querySelectorAll(".answer");
-
-
-  let wrong=[];
-
-
-  G.currentAnswers.forEach(
-    (a,index)=>{
-
-      if(a!==q.correct){
-        wrong.push(index);
-      }
-
-    }
-  );
-
-
-  wrong=shuffle(wrong).slice(0,2);
-
-
-  wrong.forEach(index=>{
-
-    buttons[index].classList.add(
-      "disabled"
+  el.textContent =
+    "❤️".repeat(
+      Math.max(
+        0,
+        G.lives
+      )
     );
 
-    buttons[index].disabled=true;
-
-  });
+}
 
 
-  toast(
-    "✂️ 2 ta noto‘g‘ri javob olib tashlandi."
+/* =========================
+   O‘YINNI TUGATISH
+========================= */
+
+function finishGame(){
+
+  clearInterval(
+    G.timer
   );
 
-}
+
+  document.getElementById(
+    "game"
+  ).style.display =
+    "none";
 
 
-/* O‘TKAZISH */
-
-function skip(){
-
-  if(G.ended)return;
-
-  clearTimers();
-
-  G.skipped++;
-
-  G.i++;
-
-  G.half=false;
-
-  toast("⏭ Savol o‘tkazildi.");
-
-  setTimeout(ask,250);
-
-}
-
-
-/* YAKUN */
-
-function fin(){
-
-  if(G.ended)return;
-
-  G.ended=true;
-
-  clearTimers();
+  document.getElementById(
+    "result"
+  ).style.display =
+    "block";
 
 
   S.games++;
-  S.total+=G.answered;
-  S.correct+=G.correct;
 
 
-  if(G.sc>S.best){
-    S.best=G.sc;
+  S.correct +=
+    G.correct;
+
+
+  S.total +=
+    G.questions.length;
+
+
+  if(
+    G.sc > S.best
+  ){
+
+    S.best =
+      G.sc;
+
   }
 
 
-  if(G.m==="tezkor"&&G.correct>S.quickBest){
-    S.quickBest=G.correct;
-  }
-
-
-  if(G.m==="marafon"&&G.correct>S.marathonBest){
-    S.marathonBest=G.correct;
-  }
-
-
-  if(G.maxStreak>S.maxStreak){
-    S.maxStreak=G.maxStreak;
-  }
-
-
-  if(G.m==="kunlik"){
-    S.dailyDone=todayKey();
-  }
-
-
-  addTask("answer10",G.answered);
-  addTask("correct5",G.correct);
-  addTask("game1",1);
-
-
-  const earnedXP=
+  const earnedXP =
     Math.max(
       0,
-      G.xp+Math.round(G.sc/10)
+      G.xp +
+      Math.round(
+        G.sc / 10
+      )
     );
 
 
-  S.xp+=earnedXP;
+  S.xp +=
+    earnedXP;
 
 
-  checkAchievements();
-  saveStats();
+  if(G.m === "kunlik"){
+
+    const today =
+      new Date()
+      .toISOString()
+      .slice(0,10);
 
 
-  const accuracy=
-    G.answered
-    ?Math.round(
-      G.correct/G.answered*100
-    )
-    :0;
+    S.dailyDate =
+      today;
+
+    S.dailyDone =
+      true;
+
+  }
 
 
-  document.getElementById("app").innerHTML=`
+  updateTasks();
 
-    <div class="header">
+  updateAchievements();
 
-      <div class="logo">
-        🧠 Viktorina
-      </div>
-
-    </div>
+  saveState();
 
 
-    <div class="card result">
-
-      <div style="font-size:50px">
-        ${G.correct===G.answered&&G.answered>0?"🏆":"🎉"}
-      </div>
-
-      <h2>
-        O‘yin tugadi!
-      </h2>
-
-      <div class="result-score">
-        ${G.sc}
-      </div>
-
-      <div class="muted">
-        ochko
-      </div>
+  document.getElementById(
+    "resultScore"
+  ).textContent =
+    G.sc + " ball";
 
 
-      <div class="result-stat">
-        <span>🎯 To‘g‘ri</span>
-        <b>${G.correct}/${G.answered}</b>
-      </div>
+  document.getElementById(
+    "resultInfo"
+  ).innerHTML =
 
-
-      <div class="result-stat">
-        <span>📊 Aniqlik</span>
-        <b>${accuracy}%</b>
-      </div>
-
-
-      <div class="result-stat">
-        <span>🔥 Eng uzun seriya</span>
-        <b>${G.maxStreak}</b>
-      </div>
-
-
-      <div class="result-stat">
-        <span>⭐ XP</span>
-        <b>+${earnedXP}</b>
-      </div>
-
-
-      <button
-        class="primary"
-        onclick="start('${G.m}')">
-
-        🔄 Yana o‘ynash
-
-      </button>
-
-
-      <div style="height:9px"></div>
-
-
-      <button
-        class="secondary"
-        onclick="profile()">
-
-        👤 Profil
-
-      </button>
-
-
-      <div style="height:9px"></div>
-
-
-      <button
-        class="secondary"
-        onclick="shareResult()">
-
-        📤 Natijani ulashish
-
-      </button>
-
-
-      <div style="height:9px"></div>
-
-
-      <button
-        class="secondary"
-        onclick="home()">
-
-        🏠 Bosh sahifa
-
-      </button>
-
-    </div>
-
-  `;
+    `To‘g‘ri javoblar: <b>${G.correct}</b><br>` +
+    `Javobsiz/o‘tkazilgan: <b>${G.skipped}</b><br>` +
+    `Olingan XP: <b>+${earnedXP}</b><br>` +
+    `Eng yaxshi natija: <b>${S.best}</b>`;
 
 }
 
 
-/* PROFIL */
+/* =========================
+   BOSH SAHIFA
+========================= */
 
-function profile(){
+function home(){
 
-  prepareDailyTasks();
-
-  const level=getLevel();
-  const progress=getLevelProgress();
-  const next=getNextLevelXP();
-
-
-  document.body.insertAdjacentHTML(
-    "beforeend",
-
-    `
-
-    <div class="modal-bg">
-
-      <div class="modal">
-
-        <div class="modal-title">
-          👤 Profil
-        </div>
+  clearInterval(
+    G.timer
+  );
 
 
-        <div class="level-box">
-
-          <div style="font-size:18px;font-weight:800">
-            ${U.first_name||"O‘yinchi"}
-          </div>
-
-          <div class="level-number">
-            ${level}
-          </div>
-
-          <div>
-            ⭐ ${S.xp} XP
-          </div>
+  document.getElementById(
+    "game"
+  ).style.display =
+    "none";
 
 
-          <div class="level-progress">
-
-            <div
-              class="level-progress-bar"
-              style="width:${progress}%">
-            </div>
-
-          </div>
+  document.getElementById(
+    "result"
+  ).style.display =
+    "none";
 
 
-          <div class="muted">
-            ${progress}% · Keyingi daraja:
-            ${next} XP
-          </div>
-
-        </div>
+  document.getElementById(
+    "profile"
+  ).style.display =
+    "none";
 
 
-        <div class="section-title" style="margin-top:20px">
-          📊 Statistika
-        </div>
+  document.getElementById(
+    "home"
+  ).style.display =
+    "block";
 
 
-        <div class="result-stat">
-          <span>🎮 O‘yinlar</span>
-          <b>${S.games}</b>
-        </div>
-
-        <div class="result-stat">
-          <span>🧠 Savollar</span>
-          <b>${S.total}</b>
-        </div>
-
-        <div class="result-stat">
-          <span>🎯 To‘g‘ri javoblar</span>
-          <b>${S.correct}</b>
-        </div>
-
-        <div class="result-stat">
-          <span>🏆 Rekord</span>
-          <b>${S.best}</b>
-        </div>
-
-        <div class="result-stat">
-          <span>🔥 Eng uzun seriya</span>
-          <b>${S.maxStreak}</b>
-        </div>
-
-        <div class="result-stat">
-          <span>⚡ Tezkor rekordi</span>
-          <b>${S.quickBest}</b>
-        </div>
-
-        <div class="result-stat">
-          <span>🔥 Marafon rekordi</span>
-          <b>${S.marathonBest}</b>
-        </div>
-
-
-        <div class="section-title" style="margin-top:20px">
-          🏆 Yutuqlar
-        </div>
-
-
-        <div class="achievement-grid">
-
-          ${ACHIEVEMENTS.map(a=>{
-
-            const done=S.medals.includes(a.id);
-
-            return `
-
-              <div class="
-                achievement
-                ${done?"":"locked"}
-              ">
-
-                <div class="achievement-icon">
-                  ${a.icon}
-                </div>
-
-                <div class="achievement-name">
-                  ${a.name}
-                </div>
-
-                <div class="achievement-text">
-                  ${a.text}
-                </div>
-
-              </div>
-
-            `;
-
-          }).join("")}
-
-        </div>
-
-
-        <button
-          class="close"
-          onclick="closeModal()">
-
-          Yopish
-
-        </button>
-
-      </div>
-
-    </div>
-
-    `
+  updateNav(
+    "home"
   );
 
 }
 
 
-function closeModal(){
+/* =========================
+   PROFIL
+========================= */
 
-  const m=document.querySelector(".modal-bg");
+function showProfile(){
 
-  if(m)m.remove();
+  document.getElementById(
+    "home"
+  ).style.display =
+    "none";
 
-}
 
-function showAchievements(){
-  profile();
-}
+  document.getElementById(
+    "game"
+  ).style.display =
+    "none";
 
 
-/* TOPSHIRIQLAR */
+  document.getElementById(
+    "result"
+  ).style.display =
+    "none";
 
-function showTasks(){
 
-  prepareDailyTasks();
+  document.getElementById(
+    "profile"
+  ).style.display =
+    "block";
 
 
-  document.body.insertAdjacentHTML(
-    "beforeend",
+  updateProfile();
 
-    `
-
-    <div class="modal-bg">
-
-      <div class="modal">
-
-        <div class="modal-title">
-          📅 Kunlik topshiriqlar
-        </div>
-
-
-        ${DAILY_TASKS.map(t=>{
-
-          const value=S.tasks[t.id]||0;
-
-          const percent=Math.min(
-            100,
-            Math.round(value/t.goal*100)
-          );
-
-          const done=value>=t.goal;
-
-          return `
-
-            <div class="task">
-
-              <div class="task-head">
-
-                <span>
-                  ${t.icon} ${t.name}
-                </span>
-
-                <span>
-                  ${done?"✅":""}
-                </span>
-
-              </div>
-
-              <div class="muted">
-                ${t.text}
-              </div>
-
-              <div class="task-progress">
-
-                <div
-                  style="width:${percent}%">
-                </div>
-
-              </div>
-
-              <div
-                style="
-                  margin-top:6px;
-                  font-size:12px;
-                  display:flex;
-                  justify-content:space-between;
-                ">
-
-                <span>
-                  ${value}/${t.goal}
-                </span>
-
-                <b>
-                  +${t.reward} XP
-                </b>
-
-              </div>
-
-            </div>
-
-          `;
-
-        }).join("")}
-
-
-        <button
-          class="primary"
-          style="margin-top:15px"
-          onclick="claimDailyBonus()">
-
-          🎁 Kunlik bonus olish
-
-        </button>
-
-
-        <button
-          class="close"
-          onclick="closeModal()">
-
-          Yopish
-
-        </button>
-
-      </div>
-
-    </div>
-
-    `
-  );
-
-}
-
-
-/* REYTING */
-
-function showBoard(){
-
-  document.body.insertAdjacentHTML(
-    "beforeend",
-
-    `
-
-    <div class="modal-bg">
-
-      <div class="modal">
-
-        <div class="modal-title">
-          🏅 Reyting
-        </div>
-
-        <div style="text-align:center;padding:20px">
-
-          <div style="font-size:45px">
-            🏅
-          </div>
-
-          <h3>
-            Onlayn reyting
-          </h3>
-
-          <div class="muted">
-
-            Hozircha reyting tizimi
-            qurilmada ishlaydi.
-            Keyingi bosqichda
-            Firebase ulanadi.
-
-          </div>
-
-        </div>
-
-
-        <div class="result-stat">
-          <span>⭐ Sizning XP</span>
-          <b>${S.xp}</b>
-        </div>
-
-        <div class="result-stat">
-          <span>🏆 Rekord</span>
-          <b>${S.best}</b>
-        </div>
-
-
-        <button
-          class="close"
-          onclick="closeModal()">
-
-          Yopish
-
-        </button>
-
-      </div>
-
-    </div>
-
-    `
-  );
-
-}
-
-
-/* ULASHISH */
-
-function shareResult(){
-
-  const level=getLevel();
-
-  const text=
-`🧠 Viktorina
-
-🏆 ${S.best} ochko
-⭐ ${S.xp} XP
-🎖 ${level}-daraja
-🔥 ${S.maxStreak} ketma-ket to‘g‘ri
-
-Men Viktorina’da bilimimni sinayapman!`;
-
-
-  if(
-    tg&&
-    tg.openTelegramLink
-  ){
-
-    const url=
-      "https://t.me/share/url?url="+
-      encodeURIComponent(APP_LINK)+
-      "&text="+
-      encodeURIComponent(text);
-
-    tg.openTelegramLink(url);
-
-  }
-
-  else if(navigator.share){
-
-    navigator.share({
-      title:"Viktorina",
-      text:text,
-      url:APP_LINK
-    }).catch(()=>{});
-
-  }
-
-  else if(navigator.clipboard){
-
-    navigator.clipboard
-      .writeText(text)
-      .then(()=>{
-        toast("📋 Natija nusxalandi.");
-      })
-      .catch(()=>{
-        alert(text);
-      });
-
-  }
-
-  else{
-
-    alert(text);
-
-  }
-
-}
-
-
-/* FIKR */
-
-function feedback(){
-
-  if(
-    FEEDBACK_URL&&
-    FEEDBACK_URL!=="https://t.me/SIZNING_USERNAME"
-  ){
-
-    if(tg&&tg.openTelegramLink){
-
-      tg.openTelegramLink(
-        FEEDBACK_URL
-      );
-
-    }else{
-
-      window.open(
-        FEEDBACK_URL,
-        "_blank"
-      );
-
-    }
-
-  }else{
-
-    toast(
-      "💬 Fikr bildirish manzili hali sozlanmagan."
-    );
-
-  }
-
-}
-
-
-/* BOSHLASH */
-
-prepareDailyTasks();
-home();
-
-</script>
-</body>
-</html>
+ 
