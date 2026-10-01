@@ -449,14 +449,20 @@ button:disabled{
   font-weight:800;
 }
 
-.medal{
-  font-size:24px;
-}
-
 .empty{
   text-align:center;
   padding:35px 15px;
   color:var(--muted);
+}
+
+.diff-info{
+  margin-top:10px;
+  padding:11px;
+  border-radius:14px;
+  background:rgba(139,92,246,.10);
+  color:var(--muted);
+  font-size:11px;
+  text-align:center;
 }
 
 @media(max-width:380px){
@@ -468,9 +474,11 @@ button:disabled{
 </head>
 
 <body>
+
 <div id="app" class="app"></div>
 
 <script>
+
 const tg=window.Telegram&&Telegram.WebApp;
 
 try{
@@ -485,8 +493,7 @@ const FB_PROJECT="";
 const FB_KEY="";
 const APP_LINK="https://t.me/aqlli_miya_bot/viktorina";
 
-const U=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||
-{
+const U=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{
   id:0,
   first_name:"Mehmon"
 };
@@ -507,7 +514,7 @@ const esc=s=>String(s).replace(
 
 const vib=t=>{
   try{
-    tg.HapticFeedback.notificationOccurred(t)
+    tg.HapticFeedback.notificationOccurred(t);
   }catch(e){}
 };
 
@@ -533,7 +540,7 @@ try{
 
 const save=()=>{
   try{
-    localStorage.setItem("vk",JSON.stringify(S))
+    localStorage.setItem("vk",JSON.stringify(S));
   }catch(e){}
 };
 
@@ -547,7 +554,47 @@ const award=n=>{
 };
 
 let cat="Hammasi";
+let difficulty="orta";
+let questionCount=10;
+
+const DIFFICULTY={
+  oson:{
+    name:"🟢 Oson",
+    time:30,
+    base:10,
+    mult:1
+  },
+
+  orta:{
+    name:"🟡 O‘rta",
+    time:20,
+    base:15,
+    mult:1.5
+  },
+
+  qiyin:{
+    name:"🔴 Qiyin",
+    time:15,
+    base:20,
+    mult:2
+  },
+
+  judaqiyin:{
+    name:"🔥 Juda qiyin",
+    time:10,
+    base:30,
+    mult:3
+  }
+};
+
 let G={};
+
+function pool(){
+
+  return Object.entries(Q)
+    .filter(([k])=>cat=="Hammasi"||k==cat)
+    .flatMap(([k,v])=>v);
+}
 
 function home(){
 
@@ -557,22 +604,31 @@ function home(){
   ];
 
   const progress=S.xp%100;
+  const d=DIFFICULTY[difficulty];
 
   app.innerHTML=`
 
     <div class="top">
+
       <div class="logo">
-        <div class="logo-icon">🧠</div>
+
+        <div class="logo-icon">
+          🧠
+        </div>
+
         <div>
           <h1>Viktorina</h1>
           <p>Aqlingni sinab ko‘r</p>
         </div>
+
       </div>
 
       <div class="profile">
         👤
       </div>
+
     </div>
+
 
     <div class="hero">
 
@@ -618,84 +674,244 @@ function home(){
 
     </div>
 
+
     <div class="section-title">
       <h2>Kategoriya</h2>
       <span>${pool().length} ta savol</span>
     </div>
 
     <div class="categories">
+
       ${cats.map(c=>`
+
         <button
           class="chip ${c==cat?"active":""}"
           onclick="cat='${esc(c)}';home()">
+
           ${esc(c)}
+
         </button>
+
       `).join("")}
+
     </div>
+
+
+    <div class="section-title">
+      <h2>Qiyinchilik</h2>
+    </div>
+
+    <div class="categories">
+
+      <button
+        class="chip ${difficulty=="oson"?"active":""}"
+        onclick="difficulty='oson';home()">
+
+        🟢 Oson
+
+      </button>
+
+      <button
+        class="chip ${difficulty=="orta"?"active":""}"
+        onclick="difficulty='orta';home()">
+
+        🟡 O‘rta
+
+      </button>
+
+      <button
+        class="chip ${difficulty=="qiyin"?"active":""}"
+        onclick="difficulty='qiyin';home()">
+
+        🔴 Qiyin
+
+      </button>
+
+      <button
+        class="chip ${difficulty=="judaqiyin"?"active":""}"
+        onclick="difficulty='judaqiyin';home()">
+
+        🔥 Juda qiyin
+
+      </button>
+
+    </div>
+
+
+    <div class="diff-info">
+
+      ${d.name} · ${d.time} soniya ·
+      asosiy ${d.base} ball ·
+      tez javob uchun qo‘shimcha ball
+
+    </div>
+
+
+    <div class="section-title">
+      <h2>Savollar soni</h2>
+    </div>
+
+    <div class="categories">
+
+      <button
+        class="chip ${questionCount==10?"active":""}"
+        onclick="questionCount=10;home()">
+
+        10 ta
+
+      </button>
+
+      <button
+        class="chip ${questionCount==20?"active":""}"
+        onclick="questionCount=20;home()">
+
+        20 ta
+
+      </button>
+
+      <button
+        class="chip ${questionCount==30?"active":""}"
+        onclick="questionCount=30;home()">
+
+        30 ta
+
+      </button>
+
+    </div>
+
 
     <div class="section-title">
       <h2>O‘yin rejimi</h2>
     </div>
 
+
     <div class="mode-grid">
 
-      <button class="mode primary" onclick="start('klassik')">
-        <div class="mode-icon">🎯</div>
-        <div class="mode-title">Klassik</div>
-        <div class="mode-info">10 ta savol</div>
+      <button
+        class="mode primary"
+        onclick="start('klassik')">
+
+        <div class="mode-icon">
+          🎯
+        </div>
+
+        <div class="mode-title">
+          Klassik
+        </div>
+
+        <div class="mode-info">
+          ${questionCount} ta savol
+        </div>
+
       </button>
 
-      <button class="mode" onclick="start('tezkor')">
-        <div class="mode-icon">⚡</div>
-        <div class="mode-title">Tezkor</div>
-        <div class="mode-info">60 soniyada</div>
+
+      <button
+        class="mode"
+        onclick="start('tezkor')">
+
+        <div class="mode-icon">
+          ⚡
+        </div>
+
+        <div class="mode-title">
+          Tezkor
+        </div>
+
+        <div class="mode-info">
+          60 soniyada maksimal ball
+        </div>
+
       </button>
 
-      <button class="mode" onclick="start('jon')">
-        <div class="mode-icon">❤️</div>
-        <div class="mode-title">3 jon</div>
-        <div class="mode-info">Xato qilsangiz jon ketadi</div>
+
+      <button
+        class="mode"
+        onclick="start('jon')">
+
+        <div class="mode-icon">
+          ❤️
+        </div>
+
+        <div class="mode-title">
+          3 jon
+        </div>
+
+        <div class="mode-info">
+          Xato = 1 jon
+        </div>
+
       </button>
 
-      <button class="mode" onclick="start('kunlik')">
-        <div class="mode-icon">📅</div>
-        <div class="mode-title">Kunlik</div>
-        <div class="mode-info">×3 ball</div>
+
+      <button
+        class="mode"
+        onclick="start('kunlik')">
+
+        <div class="mode-icon">
+          📅
+        </div>
+
+        <div class="mode-title">
+          Kunlik
+        </div>
+
+        <div class="mode-info">
+          ×3 ball
+        </div>
+
       </button>
 
     </div>
+
 
     <div class="bottom-grid">
 
-      <button class="small-btn" onclick="board()">
-        🏆<br>Reyting
+      <button
+        class="small-btn"
+        onclick="board()">
+
+        🏆<br>
+        Reyting
+
       </button>
 
-      <button class="small-btn" onclick="medals()">
-        🎖<br>Yutuqlar
+
+      <button
+        class="small-btn"
+        onclick="medals()">
+
+        🎖<br>
+        Yutuqlar
+
       </button>
 
-      <button class="small-btn" onclick="fb()">
-        💬<br>Taklif
+
+      <button
+        class="small-btn"
+        onclick="fb()">
+
+        💬<br>
+        Taklif
+
       </button>
 
     </div>
+
   `;
 }
 
+
 function fb(){
+
   try{
     tg.openTelegramLink(FEEDBACK_URL);
   }catch(e){
     open(FEEDBACK_URL);
   }
+
 }
 
-function pool(){
-  return Object.entries(Q)
-    .filter(([k])=>cat=="Hammasi"||k==cat)
-    .flatMap(([k,v])=>v);
-}
 
 function start(m){
 
@@ -706,45 +922,92 @@ function start(m){
     return;
   }
 
+
   if(m=="kunlik"){
 
     const d=new Date().toDateString();
 
     if(S.day==d){
-      alert("Bugungi savolga javob berdingiz. Ertaga qaytib keling!");
+
+      alert(
+        "Bugungi savolga javob berdingiz. Ertaga qaytib keling!"
+      );
+
       return;
     }
 
     S.day=d;
+
     save();
 
-    p=[shuf(Object.values(Q).flat())[0]];
+    p=[
+      shuf(Object.values(Q).flat())[0]
+    ];
+
   }
 
   else if(m=="klassik"){
-    p=p.slice(0,10);
+
+    p=p.slice(
+      0,
+      Math.min(questionCount,p.length)
+    );
+
+  }
+
+  else if(m=="jon"){
+
+    p=p.slice(
+      0,
+      Math.min(questionCount,p.length)
+    );
+
   }
 
   else{
+
     p=p.concat(shuf(pool()));
+
   }
 
+
   G={
-    m,
-    p,
+
+    m:m,
+
+    p:p,
+
     i:0,
+
     sc:0,
+
     lv:m=="jon"?3:99,
+
     st:0,
+
     ok:0,
+
     h:1,
+
     s:1,
+
     lock:0,
-    end:m=="tezkor"?Date.now()+60000:0
+
+    time:DIFFICULTY[difficulty].time,
+
+    maxTime:DIFFICULTY[difficulty].time,
+
+    end:m=="tezkor"
+      ?Date.now()+60000
+      :0
+
   };
 
+
   ask();
+
 }
+
 
 function ask(){
 
@@ -753,74 +1016,143 @@ function ask(){
     G.lv<1||
     (G.end&&Date.now()>=G.end)
   ){
+
     return fin();
+
   }
+
 
   const q=G.p[G.i];
 
   const o=shuf(q.slice(1));
 
+  const d=DIFFICULTY[difficulty];
+
+
   G.q=q;
+
   G.o=o;
-  G.t=15;
+
+  G.t=d.time;
+
+  G.maxTime=d.time;
+
   G.lock=0;
+
 
   let info="";
 
+
   if(G.m=="tezkor"){
-    info=`⚡ <span id="g">${Math.ceil((G.end-Date.now())/1000)} s</span>`;
+
+    info=
+      `⚡ <span id="g">`+
+      `${Math.ceil((G.end-Date.now())/1000)} s`+
+      `</span>`;
+
   }
+
   else if(G.m=="klassik"){
-    info=`Savol ${G.i+1}/${G.p.length}`;
+
+    info=
+      `Savol ${G.i+1}/${G.p.length}`;
+
   }
+
   else if(G.m=="jon"){
-    info="❤️".repeat(G.lv);
+
+    info=
+      "❤️".repeat(G.lv)+
+      ` · ${G.i+1}/${G.p.length}`;
+
   }
+
   else{
-    info="📅 Kunlik savol";
+
+    info="📅 Kunlik";
+
   }
+
 
   app.innerHTML=`
 
-    <button class="back" onclick="confirmHome()">
+    <button
+      class="back"
+      onclick="confirmHome()">
+
       ← Chiqish
+
     </button>
+
 
     <div class="question-head">
 
       <div class="question-number">
+
         ${info}
+
       </div>
+
 
       <div class="score">
+
         ⭐ ${G.sc}
+
       </div>
 
     </div>
 
+
     <div class="timer">
-      <i id="b" style="width:100%"></i>
+
+      <i
+        id="b"
+        style="width:100%">
+
+      </i>
+
     </div>
+
 
     <div class="card">
 
-      <div class="question">
-        ${esc(q[0])}
+      <div class="muted">
+
+        ${d.name}
+        ·
+        ${d.time} soniya
+
       </div>
+
+
+      <div class="question">
+
+        ${esc(q[0])}
+
+      </div>
+
 
       <div class="answers">
 
         ${o.map((x,k)=>`
+
           <button
             class="answer"
             id="o${k}"
             onclick="pick(${k})">
-            <b>${String.fromCharCode(65+k)}.</b>
+
+            <b>
+              ${String.fromCharCode(65+k)}.
+            </b>
+
             ${esc(x)}
+
           </button>
+
         `).join("")}
 
       </div>
+
 
       <div class="tools">
 
@@ -828,24 +1160,37 @@ function ask(){
           id="h"
           onclick="half()"
           ${G.h?"":"disabled"}>
+
           ✂️ 50/50
+
         </button>
+
 
         <button
           id="s"
           onclick="skip()"
           ${G.s?"":"disabled"}>
+
           ⏭ O‘tkazish
+
         </button>
 
       </div>
 
     </div>
+
   `;
 
+
   clearInterval(G.tm);
-  G.tm=setInterval(tick,1000);
+
+  G.tm=setInterval(
+    tick,
+    1000
+  );
+
 }
+
 
 function tick(){
 
@@ -853,41 +1198,67 @@ function tick(){
 
   const b=$("b");
 
+
   if(b){
-    b.style.width=(G.t/15*100)+"%";
+
+    b.style.width=
+      Math.max(
+        0,
+        G.t/G.maxTime*100
+      )+"%";
+
   }
+
 
   if(G.end){
 
     if(Date.now()>=G.end){
+
       clearInterval(G.tm);
+
       return fin();
+
     }
+
 
     const g=$("g");
 
+
     if(g){
+
       g.textContent=
-        Math.ceil((G.end-Date.now())/1000)+" s";
+        Math.ceil(
+          (G.end-Date.now())/1000
+        )+" s";
+
     }
+
   }
 
+
   if(G.t<=0){
+
     pick(-1);
+
   }
+
 }
+
 
 function pick(k){
 
   if(G.lock)return;
 
+
   G.lock=1;
 
   clearInterval(G.tm);
 
+
   const good=
-    k>=0&&
-    G.o[k]==G.q[1];
+    k>=0 &&
+    G.o[k]===G.q[1];
+
 
   G.o.forEach((x,j)=>{
 
@@ -897,186 +1268,430 @@ function pick(k){
 
     e.disabled=true;
 
-    if(x==G.q[1]){
-      e.classList.add("correct");
+
+    if(x===G.q[1]){
+
+      e.classList.add(
+        "correct"
+      );
+
     }
+
   });
 
+
   if(k>=0&&!good){
+
     const e=$("o"+k);
 
-    if(e)e.classList.add("wrong");
+    if(e){
+
+      e.classList.add(
+        "wrong"
+      );
+
+    }
+
   }
+
 
   if(good){
 
     G.st++;
+
     G.ok++;
 
-    let pt=
-      10+
-      G.t+
-      Math.min(G.st,5)*2;
+
+    const d=
+      DIFFICULTY[difficulty];
+
+
+    /*
+      Ball tizimi:
+
+      Asosiy ball:
+      Oson       = 10
+      O‘rta      = 15
+      Qiyin      = 20
+      Juda qiyin = 30
+
+      Tezlik bonusi:
+      qolgan vaqt × 1
+
+      Ketma-ket bonus:
+      har bir ketma-ket javob +2,
+      maksimum +20
+    */
+
+
+    const base=d.base;
+
+    const speedBonus=
+      Math.max(0,G.t);
+
+    const streakBonus=
+      Math.min(
+        G.st*2,
+        20
+      );
+
+
+    let points=
+      base+
+      speedBonus+
+      streakBonus;
+
 
     if(G.m=="kunlik"){
-      pt*=3;
+
+      points*=3;
+
     }
 
-    G.sc+=pt;
+
+    G.sc+=points;
+
 
     vib("success");
 
-    if(G.st==5){
-      award("🔥 5 ketma-ket javob");
+
+    if(G.st==3){
+
+      award(
+        "🔥 3 ketma-ket javob"
+      );
+
     }
 
-  }else{
+
+    if(G.st==5){
+
+      award(
+        "🔥 5 ketma-ket javob"
+      );
+
+    }
+
+
+    if(G.st==10){
+
+      award(
+        "👑 10 ketma-ket javob"
+      );
+
+    }
+
+  }
+
+  else{
 
     G.st=0;
 
+
     if(G.m=="jon"){
+
       G.lv--;
+
     }
 
+
     vib("error");
+
   }
+
 
   G.i++;
 
-  setTimeout(ask,850);
+
+  setTimeout(
+    ask,
+    850
+  );
+
 }
+
 
 function half(){
 
   if(!G.h||G.lock)return;
 
+
   G.h=0;
+
 
   $("h").disabled=true;
 
+
   let n=0;
+
 
   G.o.forEach((x,j)=>{
 
     if(
-      x!=G.q[1]&&
+      x!==G.q[1]&&
       n<2
     ){
+
       n++;
+
 
       const e=$("o"+j);
 
-      e.disabled=true;
-      e.style.opacity=".2";
+
+      if(e){
+
+        e.disabled=true;
+
+        e.style.opacity=".2";
+
+      }
+
     }
 
   });
+
 }
+
 
 function skip(){
 
   if(!G.s||G.lock)return;
 
+
   G.s=0;
+
+  clearInterval(G.tm);
+
 
   G.i++;
 
+
   ask();
+
 }
+
 
 function confirmHome(){
 
-  if(confirm("O‘yindan chiqmoqchimisiz?")){
+  if(
+    confirm(
+      "O‘yindan chiqmoqchimisiz?"
+    )
+  ){
+
     clearInterval(G.tm);
+
     home();
+
   }
+
 }
+
 
 function fin(){
 
   clearInterval(G.tm);
 
-  const xp=Math.round(G.sc/2);
 
-  const nb=G.sc>S.best;
+  const xp=
+    Math.max(
+      5,
+      Math.round(G.sc/2)
+    );
+
+
+  const nb=
+    G.sc>S.best;
+
 
   S.xp+=xp;
 
+
   if(nb){
+
     S.best=G.sc;
+
   }
+
 
   if(
     G.m=="klassik"&&
     G.ok==G.p.length
   ){
-    award("💯 Mukammal natija");
+
+    award(
+      "💯 Mukammal natija"
+    );
+
   }
 
+
   if(G.sc>=250){
-    award("🚀 250+ ball");
+
+    award(
+      "🚀 250+ ball"
+    );
+
   }
+
+
+  if(G.sc>=500){
+
+    award(
+      "💎 500+ ball"
+    );
+
+  }
+
+
+  if(G.ok>=10){
+
+    award(
+      "🧠 10 ta to‘g‘ri"
+    );
+
+  }
+
 
   save();
 
   submit(G.sc);
+
 
   app.innerHTML=`
 
     <div class="result">
 
       <div class="result-icon">
+
         ${nb?"🏆":"🎉"}
+
       </div>
+
 
       <h1>
-        ${nb?"Yangi rekord!":"Ajoyib!"}
+
+        ${nb
+          ?"Yangi rekord!"
+          :"O‘yin tugadi!"}
+
       </h1>
 
+
       <p class="muted">
-        ${esc(U.first_name)}, o‘yin yakunlandi
+
+        ${esc(U.first_name)}
+
       </p>
 
+
       <div class="result-score">
+
         ${G.sc}
+
       </div>
+
 
       <div class="result-stats">
 
         <div class="result-stat">
+
           <b>${G.ok}</b>
-          <span>To‘g‘ri</span>
+
+          <span>
+            To‘g‘ri
+          </span>
+
         </div>
 
-        <div class="result-stat">
-          <b>${G.p.length-G.ok}</b>
-          <span>Xato</span>
-        </div>
 
         <div class="result-stat">
-          <b>+${xp}</b>
-          <span>XP</span>
+
+          <b>
+            ${G.p.length-G.ok}
+          </b>
+
+          <span>
+            Xato
+          </span>
+
+        </div>
+
+
+        <div class="result-stat">
+
+          <b>
+            +${xp}
+          </b>
+
+          <span>
+            XP
+          </span>
+
         </div>
 
       </div>
 
+
       <br>
 
-      <button class="p" onclick="share()">
+
+      <div class="card">
+
+        <div class="level-line">
+
+          <span>
+            🏅 ${lvl()}-daraja
+          </span>
+
+          <span>
+            ${S.xp%100}/100 XP
+          </span>
+
+        </div>
+
+
+        <div class="bar">
+
+          <i
+            style="width:${S.xp%100}%">
+
+          </i>
+
+        </div>
+
+      </div>
+
+
+      <button
+        onclick="share()">
+
         📤 Do‘stlarga ulashish
+
       </button>
 
-      <button onclick="start(G.m)">
+
+      <button
+        onclick="start(G.m)">
+
         🔁 Qayta o‘ynash
+
       </button>
 
-      <button onclick="home()">
+
+      <button
+        onclick="home()">
+
         🏠 Bosh sahifa
+
       </button>
 
     </div>
+
   `;
+
 }
+
 
 function share(){
 
@@ -1088,127 +1703,223 @@ function share(){
       `Viktorinada ${G.sc} ball to‘pladim! Mendan o‘zib keta olasanmi?`
     );
 
+
   try{
+
     tg.openTelegramLink(u);
+
   }catch(e){
+
     open(u);
+
   }
+
 }
+
 
 function medals(){
 
   app.innerHTML=`
 
-    <button class="back" onclick="home()">
+    <button
+      class="back"
+      onclick="home()">
+
       ← Orqaga
+
     </button>
 
+
     <div class="hero">
-      <div class="hero-title">🎖 Yutuqlar</div>
+
+      <div class="hero-title">
+        🎖 Yutuqlar
+      </div>
+
       <div class="muted">
         O‘yinda erishgan natijalaringiz
       </div>
+
     </div>
+
 
     ${
       S.medals.length
       ?
+
       S.medals.map(m=>`
+
         <div class="card">
-          ${m}
+
+          ${esc(m)}
+
         </div>
+
       `).join("")
+
       :
+
       `
+
         <div class="empty">
-          <div style="font-size:45px">🏆</div>
+
+          <div style="font-size:45px">
+            🏆
+          </div>
+
           <br>
-          Hali yutuq yo‘q.<br>
-          O‘ynang va yutuqlarni qo‘lga kiriting!
+
+          Hali yutuq yo‘q.
+
+          <br>
+
+          O‘ynang va yutuqlarni
+          qo‘lga kiriting!
+
         </div>
+
       `
     }
+
   `;
+
 }
+
 
 const FS=()=>
   `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents`;
 
+
 const wk=()=>{
 
   const d=new Date();
+
 
   return d.getFullYear()+
     "w"+
     Math.ceil(
       (
         d-
-        new Date(d.getFullYear(),0,1)
+        new Date(
+          d.getFullYear(),
+          0,
+          1
+        )
       )/864e5+1
     )/7;
+
 };
+
 
 async function put(col,sc){
 
   try{
 
     await fetch(
+
       `${FS()}/${col}/${U.id}?key=${FB_KEY}`+
       `&updateMask.fieldPaths=name`+
       `&updateMask.fieldPaths=score`,
+
       {
+
         method:"PATCH",
+
         headers:{
-          "Content-Type":"application/json"
+          "Content-Type":
+            "application/json"
         },
+
         body:JSON.stringify({
+
           fields:{
+
             name:{
-              stringValue:U.first_name
+              stringValue:
+                U.first_name
             },
+
             score:{
-              integerValue:String(sc)
+              integerValue:
+                String(sc)
             }
+
           }
+
         })
+
       }
+
     );
 
   }catch(e){}
+
 }
+
 
 function submit(sc){
 
-  if(!FB_PROJECT||!U.id)return;
+  if(
+    !FB_PROJECT||
+    !U.id
+  )return;
 
-  if(!S.wk||S.wk.k!=wk()){
+
+  if(
+    !S.wk||
+    S.wk.k!=wk()
+  ){
+
     S.wk={
       k:wk(),
       b:0
     };
+
   }
+
 
   if(sc>S.wk.b){
+
     S.wk.b=sc;
-    put("w"+wk(),sc);
+
+    put(
+      "w"+wk(),
+      sc
+    );
+
   }
+
 
   if(sc>=S.best){
-    put("all",sc);
+
+    put(
+      "all",
+      sc
+    );
+
   }
 
+
   save();
+
 }
+
 
 async function board(col){
 
   col=col||"w"+wk();
 
+
   app.innerHTML=`
 
-    <button class="back" onclick="home()">
+    <button
+      class="back"
+      onclick="home()">
+
       ← Orqaga
+
     </button>
+
 
     <div class="hero">
 
@@ -1222,121 +1933,194 @@ async function board(col){
 
     </div>
 
+
     <div class="bottom-grid">
 
       <button
         class="small-btn"
         onclick="board()">
-        📅<br>Haftalik
+
+        📅<br>
+        Haftalik
+
       </button>
+
 
       <button
         class="small-btn"
         onclick="board('all')">
-        🌎<br>Umumiy
+
+        🌎<br>
+        Umumiy
+
       </button>
+
 
       <button
         class="small-btn"
         onclick="home()">
-        🏠<br>Bosh sahifa
+
+        🏠<br>
+        Bosh sahifa
+
       </button>
 
     </div>
 
-    <div id="bd" class="empty">
+
+    <div
+      id="bd"
+      class="empty">
+
       Yuklanmoqda…
+
     </div>
+
   `;
+
 
   if(!FB_PROJECT){
 
     $("bd").innerHTML=`
-      <div style="font-size:40px">🏆</div>
+
+      <div style="font-size:40px">
+        🏆
+      </div>
+
       <br>
-      Reyting tizimi tez orada ishga tushadi.
+
+      Reyting tizimi
+      tez orada ishga tushadi.
+
     `;
 
     return;
+
   }
+
 
   try{
 
     const r=await fetch(
+
       FS()+":runQuery?key="+FB_KEY,
+
       {
+
         method:"POST",
+
         headers:{
-          "Content-Type":"application/json"
+          "Content-Type":
+            "application/json"
         },
+
         body:JSON.stringify({
+
           structuredQuery:{
+
             from:[
               {
                 collectionId:col
               }
             ],
+
             orderBy:[
               {
                 field:{
                   fieldPath:"score"
                 },
-                direction:"DESCENDING"
+
+                direction:
+                  "DESCENDING"
+
               }
             ],
+
             limit:10
+
           }
+
         })
+
       }
+
     );
+
 
     const L=
       (await r.json())
       .filter(x=>x.document)
-      .map(x=>x.document.fields);
+      .map(
+        x=>x.document.fields
+      );
+
 
     $("bd").innerHTML=
       L.length
+
       ?
+
       L.map((f,i)=>`
 
         <div class="card rank">
 
           <div class="rank-num">
+
             ${
               i==0?"🥇":
               i==1?"🥈":
               i==2?"🥉":
               (i+1)+"."
             }
+
           </div>
+
 
           <div class="rank-name">
-            ${esc(f.name.stringValue)}
+
+            ${esc(
+              f.name.stringValue
+            )}
+
           </div>
 
+
           <div class="rank-score">
+
             ${f.score.integerValue}
+
           </div>
 
         </div>
 
       `).join("")
+
       :
+
       `
+
         <div class="empty">
+
           Hozircha hech kim yo‘q.
+
         </div>
+
       `;
+
 
   }catch(e){
 
     $("bd").textContent=
       "Reytingni yuklab bo‘lmadi.";
+
   }
+
 }
 
+
 home();
+
 </script>
+
 </body>
 </html>
