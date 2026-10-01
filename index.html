@@ -1,439 +1,488 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Viktorina</title>
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="questions.js"></script>
 
 <style>
+:root{
+  --bg:#080b18;
+  --bg2:#10152b;
+  --card:#151b35;
+  --card2:#1b2342;
+  --text:#f8f9ff;
+  --muted:#8e98bb;
+  --accent:#8b5cf6;
+  --accent2:#a78bfa;
+  --gold:#fbbf24;
+  --green:#22c55e;
+  --red:#ef4444;
+  --blue:#3b82f6;
+  --border:rgba(255,255,255,.07);
+}
+
 *{
   box-sizing:border-box;
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   -webkit-tap-highlight-color:transparent;
 }
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f5f7;
-  color:#111;
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 20% 0%,rgba(139,92,246,.22),transparent 32%),
+    radial-gradient(circle at 100% 20%,rgba(59,130,246,.12),transparent 28%),
+    var(--bg);
+  padding:16px 15px 35px;
 }
 
 button{
-  font-family:inherit;
-  cursor:pointer;
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:15px;
+  margin:5px 0;
+  background:var(--card);
+  color:var(--text);
+  font-size:15px;
+  font-weight:650;
+  transition:.15s;
+}
+
+button:active{
+  transform:scale(.97);
+}
+
+button:disabled{
+  opacity:.4;
 }
 
 .app{
-  max-width:520px;
+  max-width:600px;
   margin:auto;
-  min-height:100vh;
-  padding:16px;
 }
 
-.header{
+.top{
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-bottom:15px;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:18px;
 }
 
 .logo{
-  font-size:27px;
-  font-weight:900;
-}
-
-.xp-mini{
-  background:#fff;
-  border-radius:15px;
-  padding:8px 12px;
-  font-weight:700;
-  box-shadow:0 3px 12px rgba(0,0,0,.06);
-}
-
-.card{
-  background:#fff;
-  border-radius:22px;
-  padding:18px;
-  margin-bottom:14px;
-  box-shadow:0 5px 20px rgba(0,0,0,.06);
-}
-
-.hero{
-  text-align:center;
-  padding:24px 18px;
-}
-
-.hero-icon{
-  font-size:55px;
-}
-
-.hero h1{
-  margin:8px 0 5px;
-  font-size:30px;
-}
-
-.muted{
-  color:#777;
-  font-size:14px;
-}
-
-.section-title{
-  font-size:17px;
-  font-weight:800;
-  margin:3px 0 12px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
+  display:flex;
+  align-items:center;
   gap:10px;
 }
 
-.select-btn{
-  background:#f3f4f6;
-  border:2px solid transparent;
-  padding:13px 8px;
+.logo-icon{
+  width:48px;
+  height:48px;
   border-radius:15px;
-  font-size:14px;
-  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  background:linear-gradient(135deg,#7c3aed,#4f46e5);
+  box-shadow:0 8px 30px rgba(124,58,237,.3);
 }
 
-.select-btn.active{
-  border-color:#111;
-  background:#fff;
+.logo h1{
+  font-size:21px;
+  font-weight:850;
+}
+
+.logo p{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.profile{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--card);
+  border:1px solid var(--border);
+  font-size:20px;
+}
+
+.hero{
+  padding:20px;
+  border-radius:24px;
+  background:
+    linear-gradient(135deg,rgba(139,92,246,.25),rgba(59,130,246,.08)),
+    var(--card);
+  border:1px solid var(--border);
+  margin-bottom:14px;
+  position:relative;
+  overflow:hidden;
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  width:130px;
+  height:130px;
+  right:-40px;
+  top:-40px;
+  border-radius:50%;
+  background:rgba(167,139,250,.12);
+}
+
+.hero-title{
+  font-size:26px;
+  font-weight:850;
+  margin-bottom:5px;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:18px;
+}
+
+.stat{
+  padding:12px 8px;
+  text-align:center;
+  border-radius:15px;
+  background:rgba(0,0,0,.18);
+}
+
+.stat b{
+  display:block;
+  font-size:17px;
+}
+
+.stat span{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.level{
+  margin-top:15px;
+}
+
+.level-line{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.bar{
+  height:7px;
+  background:#252d4c;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.bar i{
+  display:block;
+  height:100%;
+  border-radius:20px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:width .4s;
+}
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:20px 2px 9px;
+}
+
+.section-title h2{
+  font-size:16px;
+}
+
+.section-title span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.categories{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding-bottom:3px;
+  scrollbar-width:none;
+}
+
+.categories::-webkit-scrollbar{
+  display:none;
+}
+
+.chip{
+  width:auto;
+  flex:none;
+  padding:9px 14px;
+  margin:0;
+  border-radius:30px;
+  font-size:12px;
+}
+
+.chip.active{
+  background:var(--accent);
+  border-color:var(--accent);
 }
 
 .mode-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:9px;
 }
 
 .mode{
-  border:0;
-  background:#f3f4f6;
-  border-radius:17px;
-  padding:15px 10px;
+  min-height:120px;
+  padding:16px;
   text-align:left;
-}
-
-.mode.active{
-  background:#111;
-  color:#fff;
+  border-radius:19px;
+  background:var(--card);
+  position:relative;
+  overflow:hidden;
 }
 
 .mode-icon{
   font-size:25px;
+  margin-bottom:9px;
 }
 
-.mode-name{
+.mode-title{
+  font-size:14px;
   font-weight:800;
-  margin-top:6px;
 }
 
 .mode-info{
+  color:var(--muted);
   font-size:11px;
-  opacity:.7;
   margin-top:4px;
 }
 
-.primary{
-  width:100%;
+.mode.primary{
+  background:linear-gradient(135deg,#7c3aed,#4f46e5);
   border:0;
-  background:#111;
-  color:#fff;
-  padding:16px;
-  border-radius:17px;
-  font-size:17px;
-  font-weight:800;
 }
 
-.secondary{
-  width:100%;
-  border:0;
-  background:#eee;
-  color:#111;
-  padding:14px;
-  border-radius:15px;
-  font-size:15px;
-  font-weight:700;
-}
-
-.home-buttons{
+.bottom-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-top:10px;
 }
 
-.question-top{
+.small-btn{
+  font-size:12px;
+  padding:13px 5px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:17px;
+  margin:10px 0;
+}
+
+.question-head{
   display:flex;
   justify-content:space-between;
   align-items:center;
   margin-bottom:10px;
 }
 
-.badge{
-  background:#f0f0f0;
-  border-radius:12px;
-  padding:7px 10px;
-  font-size:12px;
-  font-weight:700;
+.question-number{
+  font-size:13px;
+  color:var(--muted);
 }
 
-.timer{
-  font-size:22px;
-  font-weight:900;
-}
-
-.timer.danger{
-  color:#d00;
-}
-
-.progress{
-  width:100%;
-  height:8px;
-  background:#eee;
-  border-radius:10px;
-  overflow:hidden;
-  margin:10px 0 18px;
-}
-
-.progress-bar{
-  height:100%;
-  background:#111;
-  width:0%;
-  transition:.2s;
+.score{
+  font-size:13px;
+  font-weight:800;
 }
 
 .question{
   font-size:21px;
-  font-weight:800;
   line-height:1.35;
-  margin-bottom:17px;
+  font-weight:800;
+  margin:17px 2px;
+}
+
+.timer{
+  height:7px;
+  background:#272e49;
+  border-radius:20px;
+  overflow:hidden;
+  margin:8px 0 18px;
+}
+
+.timer i{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,var(--green),var(--gold));
+  transition:width 1s linear;
 }
 
 .answers{
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:9px;
 }
 
 .answer{
-  border:2px solid #eee;
-  background:#fff;
-  padding:15px;
-  border-radius:15px;
+  margin:0;
   text-align:left;
-  font-size:15px;
-  font-weight:700;
+  padding:16px;
+  min-height:57px;
+  background:var(--card);
+  border:1px solid var(--border);
 }
 
 .answer.correct{
-  border-color:#168a45;
-  background:#eaf8ef;
+  background:var(--green)!important;
+  border-color:var(--green);
 }
 
 .answer.wrong{
-  border-color:#d22;
-  background:#fff0f0;
-}
-
-.answer.disabled{
-  opacity:.3;
+  background:var(--red)!important;
+  border-color:var(--red);
 }
 
 .tools{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:8px;
   margin-top:12px;
 }
 
-.tool{
-  border:0;
-  background:#eee;
-  padding:13px;
-  border-radius:14px;
-  font-weight:700;
-}
-
-.score-line{
-  display:flex;
-  justify-content:space-between;
-  margin-top:14px;
-  font-weight:800;
+.tools button{
+  margin:0;
+  font-size:12px;
 }
 
 .result{
   text-align:center;
+  padding-top:25px;
+}
+
+.result-icon{
+  font-size:58px;
+  margin-bottom:10px;
+}
+
+.result h1{
+  font-size:28px;
+  margin-bottom:5px;
 }
 
 .result-score{
-  font-size:52px;
+  font-size:42px;
   font-weight:900;
-  margin:10px 0;
+  margin:20px 0;
+  background:linear-gradient(90deg,#fbbf24,#f59e0b);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.result-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
 }
 
 .result-stat{
-  background:#f5f5f5;
-  padding:12px;
-  border-radius:14px;
-  margin:7px 0;
-  display:flex;
-  justify-content:space-between;
+  background:var(--card);
+  border-radius:16px;
+  padding:14px 5px;
 }
 
-.level-box{
-  text-align:center;
+.result-stat b{
+  display:block;
+  font-size:19px;
 }
 
-.level-number{
-  font-size:42px;
-  font-weight:900;
-}
-
-.level-progress{
-  height:12px;
-  background:#eee;
-  border-radius:20px;
-  overflow:hidden;
-  margin:12px 0 5px;
-}
-
-.level-progress-bar{
-  height:100%;
-  background:#111;
-}
-
-.achievement-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.achievement{
-  background:#f5f5f5;
-  border-radius:15px;
-  padding:12px;
-  text-align:center;
-}
-
-.achievement.locked{
-  opacity:.35;
-}
-
-.achievement-icon{
-  font-size:29px;
-}
-
-.achievement-name{
-  font-weight:800;
-  margin-top:4px;
-}
-
-.achievement-text{
+.result-stat span{
+  color:var(--muted);
   font-size:11px;
-  color:#777;
-  margin-top:4px;
 }
 
-.task{
-  background:#f5f5f5;
-  border-radius:15px;
-  padding:13px;
-  margin-top:9px;
+.back{
+  background:transparent;
+  border:0;
+  text-align:left;
+  padding:7px 0;
+  margin:0 0 8px;
+  width:auto;
 }
 
-.task-head{
-  display:flex;
-  justify-content:space-between;
-  font-weight:800;
-}
-
-.task-progress{
-  height:8px;
-  background:#ddd;
-  border-radius:10px;
-  overflow:hidden;
-  margin-top:8px;
-}
-
-.task-progress div{
-  height:100%;
-  background:#111;
-}
-
-.modal-bg{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.65);
-  z-index:9999;
+.rank{
   display:flex;
   align-items:center;
-  justify-content:center;
-  padding:15px;
+  gap:12px;
 }
 
-.modal{
-  background:#fff;
-  color:#111;
-  width:100%;
-  max-width:460px;
-  max-height:90vh;
-  overflow:auto;
-  border-radius:24px;
-  padding:20px;
-}
-
-.modal-title{
-  font-size:23px;
+.rank-num{
+  width:30px;
   font-weight:900;
-  text-align:center;
-  margin-bottom:15px;
 }
 
-.close{
-  width:100%;
-  margin-top:12px;
-  border:0;
-  padding:14px;
-  border-radius:15px;
-  background:#eee;
+.rank-name{
+  flex:1;
+}
+
+.rank-score{
   font-weight:800;
 }
 
-.hidden{
-  display:none!important;
+.empty{
+  text-align:center;
+  padding:35px 15px;
+  color:var(--muted);
 }
 
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:25px;
-  transform:translateX(-50%);
-  background:#111;
-  color:#fff;
-  padding:12px 18px;
-  border-radius:15px;
-  z-index:10000;
-  font-size:14px;
-  font-weight:700;
-  max-width:90%;
+.diff-info{
+  margin-top:10px;
+  padding:11px;
+  border-radius:14px;
+  background:rgba(139,92,246,.10);
+  color:var(--muted);
+  font-size:11px;
   text-align:center;
 }
 
-@media(max-width:360px){
-  .grid,
-  .mode-grid,
-  .achievement-grid{
-    grid-template-columns:1fr;
-  }
+.mode-description{
+  margin-top:10px;
+  padding:12px;
+  border-radius:14px;
+  background:rgba(59,130,246,.08);
+  color:var(--muted);
+  font-size:11px;
+  text-align:center;
+}
 
-  .question{
-    font-size:19px;
+.quick-time{
+  font-weight:900;
+  color:var(--gold);
+}
+
+@media(max-width:380px){
+  .mode-grid{
+    grid-template-columns:1fr;
   }
 }
 </style>
@@ -441,162 +490,87 @@ button{
 
 <body>
 
-<div class="app" id="app"></div>
+<div id="app" class="app"></div>
 
 <script>
-/* =========================
-   TELEGRAM
-========================= */
 
-const tg=window.Telegram&&window.Telegram.WebApp;
+const tg=window.Telegram&&Telegram.WebApp;
 
-if(tg){
+try{
   tg.ready();
   tg.expand();
-}
+  tg.setHeaderColor("#080b18");
+  tg.setBackgroundColor("#080b18");
+}catch(e){}
+
+const FEEDBACK_URL="https://t.me/SIZNING_USERNAME";
+const FB_PROJECT="";
+const FB_KEY="";
+const APP_LINK="https://t.me/aqlli_miya_bot/viktorina";
 
 const U=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{
   id:0,
   first_name:"Mehmon"
 };
 
+const $=id=>document.getElementById(id);
+const app=$("app");
 
-/* =========================
-   SOZLAMALAR
-========================= */
+const esc=s=>String(s).replace(
+  /[&<>"']/g,
+  c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c])
+);
 
-const FEEDBACK_URL="https://t.me/SIZNING_USERNAME";
-const APP_LINK="https://t.me/aqlli_miya_bot/viktorina";
+const vib=t=>{
+  try{
+    tg.HapticFeedback.notificationOccurred(t);
+  }catch(e){}
+};
 
-
-/* =========================
-   SAQLANADIGAN MA'LUMOT
-========================= */
+const shuf=a=>
+  a.map(x=>[Math.random(),x])
+   .sort((a,b)=>a[0]-b[0])
+   .map(x=>x[1]);
 
 let S={
   xp:0,
   best:0,
   medals:[],
   day:"",
-  wk:null,
-
-  total:0,
-  correct:0,
-  games:0,
-
-  streak:0,
-  maxStreak:0,
-
-  lastLogin:"",
-  loginStreak:0,
-
-  dailyBonus:"",
-  tasks:{},
-
-  quickBest:0,
-  marathonBest:0
+  wk:null
 };
 
 try{
-  const saved=localStorage.getItem("viktorina_stats");
-
-  if(saved){
-    S={...S,...JSON.parse(saved)};
-  }
+  Object.assign(
+    S,
+    JSON.parse(localStorage.getItem("vk")||"{}")
+  );
 }catch(e){}
 
-function saveStats(){
+const save=()=>{
   try{
-    localStorage.setItem(
-      "viktorina_stats",
-      JSON.stringify(S)
-    );
+    localStorage.setItem("vk",JSON.stringify(S));
   }catch(e){}
-}
+};
 
+const lvl=()=>Math.floor(S.xp/100)+1;
 
-/* =========================
-   DARAJA
-========================= */
-
-const LEVELS=[
-  0,
-  100,
-  250,
-  500,
-  900,
-  1400,
-  2000,
-  2800,
-  3800,
-  5000,
-  6500,
-  8200,
-  10000,
-  12000,
-  14500,
-  17500,
-  21000,
-  25000,
-  30000,
-  36000
-];
-
-function getLevel(){
-
-  let level=1;
-
-  for(let i=0;i<LEVELS.length;i++){
-
-    if(S.xp>=LEVELS[i]){
-      level=i+1;
-    }
-
+const award=n=>{
+  if(!S.medals.includes(n)){
+    S.medals.push(n);
+    save();
   }
+};
 
-  return level;
-}
-
-function getCurrentLevelXP(){
-
-  const level=getLevel();
-
-  return LEVELS[level-1]||0;
-}
-
-function getNextLevelXP(){
-
-  const level=getLevel();
-
-  if(level<LEVELS.length){
-    return LEVELS[level];
-  }
-
-  return LEVELS[LEVELS.length-1]+5000;
-}
-
-function getLevelProgress(){
-
-  const current=getCurrentLevelXP();
-  const next=getNextLevelXP();
-
-  if(next<=current) return 100;
-
-  return Math.min(
-    100,
-    Math.max(
-      0,
-      Math.round(
-        ((S.xp-current)/(next-current))*100
-      )
-    )
-  );
-}
-
-
-/* =========================
-   QIYINCHILIK
-========================= */
+let cat="Hammasi";
+let difficulty="orta";
+let questionCount=10;
 
 const DIFFICULTY={
 
@@ -611,28 +585,28 @@ const DIFFICULTY={
     name:"🟡 O‘rta",
     time:20,
     base:15,
-    mult:1
+    mult:1.5
   },
 
   qiyin:{
     name:"🔴 Qiyin",
     time:15,
     base:20,
-    mult:1
+    mult:2
   },
 
   judaqiyin:{
     name:"🔥 Juda qiyin",
     time:10,
     base:30,
-    mult:1
+    mult:3
   }
 
 };
 
 
 /* =========================
-   REJIMLAR
+   O‘YIN REJIMLARI
 ========================= */
 
 const MODES={
@@ -682,511 +656,62 @@ const MODES={
 };
 
 
-/* =========================
-   HOLAT
-========================= */
+function todayKey(){
 
-let G={
-  m:"",
-  p:[],
-  i:0,
-  sc:0,
-  xp:0,
-  correct:0,
-  answered:0,
-  streak:0,
-  maxStreak:0,
-  lives:3,
-  time:0,
-  timer:null,
-  quickTimer:null,
-  quickLeft:60,
-  ended:false,
-  half:false,
-  skipped:0
-};
+  const d=new Date();
+
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+
+}
 
 
 /* =========================
    SAVOLLAR
 ========================= */
 
-function allPool(){
-
-  let source=[];
-
-  try{
-    if(typeof Q!=="undefined" && Q){
-      source=Q;
-    }
-  }catch(e){
-    source=[];
-  }
-
-  const result=[];
-
-  if(Array.isArray(source)){
-
-    source.forEach((q,index)=>{
-
-      if(Array.isArray(q) && q.length>=5){
-
-        result.push({
-          id:index,
-          q:q[0],
-          correct:q[1],
-          wrong:[
-            q[2],
-            q[3],
-            q[4]
-          ]
-        });
-
-      }
-
-    });
-
-    return result;
-  }
-
-  if(source && typeof source==="object"){
-
-    Object.keys(source).forEach(category=>{
-
-      const arr=source[category];
-
-      if(!Array.isArray(arr)) return;
-
-      arr.forEach((q,index)=>{
-
-        if(Array.isArray(q) && q.length>=5){
-
-          result.push({
-            id:category+"_"+index,
-            q:q[0],
-            correct:q[1],
-            wrong:[
-              q[2],
-              q[3],
-              q[4]
-            ],
-            category:category
-          });
-
-        }
-
-      });
-
-    });
-
-  }
-
-  return result;
-
-}
-
-function getCategories(){
-
-  const arr=allPool();
-
-  const set=[];
-
-  arr.forEach(q=>{
-
-    if(q.category&&!set.includes(q.category)){
-      set.push(q.category);
-    }
-
-  });
-
-  if(!set.length){
-
-    return [
-      "Umumiy",
-      "Tarix",
-      "Geografiya",
-      "O‘zbekiston",
-      "Texnologiya",
-      "Fan",
-      "Sport",
-      "San’at va kino",
-      "Hayvonot"
-    ];
-
-  }
-
-  return set;
-
-}
-
-function shuffle(arr){
-
-  const a=[...arr];
-
-  for(let i=a.length-1;i>0;i--){
-
-    const j=Math.floor(Math.random()*(i+1));
-
-    [a[i],a[j]]=[a[j],a[i]];
-
-  }
-
-  return a;
-
-}
-
 function pool(){
 
-  const all=allPool();
-
-  if(!G.category||G.category==="all"){
-    return all;
-  }
-
-  return all.filter(
-    q=>q.category===G.category
-  );
+  return Object.entries(Q)
+    .filter(([k])=>cat=="Hammasi"||k==cat)
+    .flatMap(([k,v])=>v);
 
 }
 
 
-/* =========================
-   SANA
-========================= */
+function allPool(){
 
-function todayKey(){
-
-  const d=new Date();
-
-  return d.getFullYear()+"-"+
-    String(d.getMonth()+1).padStart(2,"0")+"-"+
-    String(d.getDate()).padStart(2,"0");
+  return Object.values(Q).flat();
 
 }
+
+
+/*
+  Kunlik savol barcha foydalanuvchilar
+  uchun bir xil bo‘lishi uchun sana asosida
+  tanlanadi.
+*/
 
 function dailyQuestion(){
 
-  const arr=allPool();
+  const p=allPool();
 
-  if(!arr.length) return null;
+  if(!p.length)return null;
 
-  const key=todayKey();
+  const d=todayKey();
 
   let n=0;
 
-  for(let i=0;i<key.length;i++){
-    n+=key.charCodeAt(i)*(i+1);
-  }
+  for(let i=0;i<d.length;i++){
 
-  return arr[n%arr.length];
-
-}
-
-
-/* =========================
-   HAFTALIK KALIT
-========================= */
-
-function wk(){
-
-  const d=new Date();
-
-  const start=new Date(
-    d.getFullYear(),
-    0,
-    1
-  );
-
-  const day=
-    Math.floor((d-start)/864e5)+1;
-
-  const week=Math.ceil(day/7);
-
-  return d.getFullYear()+"w"+week;
-
-}
-
-
-/* =========================
-   KUNLIK TOPSHIRIQLAR
-========================= */
-
-const DAILY_TASKS=[
-
-  {
-    id:"answer10",
-    icon:"🧠",
-    name:"Bilim mashqi",
-    text:"10 ta savolga javob ber",
-    goal:10,
-    reward:50
-  },
-
-  {
-    id:"correct5",
-    icon:"🎯",
-    name:"Aniq javob",
-    text:"5 ta to‘g‘ri javob ber",
-    goal:5,
-    reward:75
-  },
-
-  {
-    id:"game1",
-    icon:"🎮",
-    name:"Bir o‘yin",
-    text:"1 ta o‘yinni tugat",
-    goal:1,
-    reward:100
-  }
-
-];
-
-function prepareDailyTasks(){
-
-  const today=todayKey();
-
-  if(S.day!==today){
-
-    S.day=today;
-
-    S.tasks={
-      answer10:0,
-      correct5:0,
-      game1:0
-    };
-
-    saveStats();
+    n=(n*31+d.charCodeAt(i))>>>0;
 
   }
 
-}
-
-function addTask(type,value=1){
-
-  prepareDailyTasks();
-
-  const task=DAILY_TASKS.find(
-    x=>x.id===type
-  );
-
-  if(!task) return;
-
-  if(S.tasks[type]===undefined){
-    S.tasks[type]=0;
-  }
-
-  const before=S.tasks[type];
-
-  S.tasks[type]=Math.min(
-    task.goal,
-    S.tasks[type]+value
-  );
-
-  if(
-    before<task.goal &&
-    S.tasks[type]>=task.goal
-  ){
-
-    S.xp+=task.reward;
-
-    toast(
-      task.icon+" Topshiriq bajarildi! +"+
-      task.reward+" XP"
-    );
-
-  }
-
-  saveStats();
-
-}
-
-
-/* =========================
-   KUNLIK BONUS
-========================= */
-
-function claimDailyBonus(){
-
-  const today=todayKey();
-
-  if(S.dailyBonus===today){
-
-    toast("🎁 Bugungi bonus allaqachon olindi.");
-
-    return;
-  }
-
-  const bonus=
-    50+(getLevel()*10);
-
-  S.dailyBonus=today;
-
-  S.xp+=bonus;
-
-  checkAchievements();
-
-  saveStats();
-
-  toast(
-    "🎁 Kunlik bonus: +"+
-    bonus+
-    " XP!"
-  );
-
-  profile();
-
-}
-
-
-/* =========================
-   YUTUQLAR
-========================= */
-
-const ACHIEVEMENTS=[
-
-  {
-    id:"first",
-    icon:"🎯",
-    name:"Birinchi qadam",
-    text:"Birinchi o‘yinni tugatish",
-    check:()=>S.games>=1
-  },
-
-  {
-    id:"ten",
-    icon:"🔟",
-    name:"10 ta",
-    text:"10 ta savolga javob berish",
-    check:()=>S.total>=10
-  },
-
-  {
-    id:"fifty",
-    icon:"🏅",
-    name:"50 ta",
-    text:"50 ta savolga javob berish",
-    check:()=>S.total>=50
-  },
-
-  {
-    id:"hundred",
-    icon:"💯",
-    name:"Yuztalik",
-    text:"100 ta savolga javob berish",
-    check:()=>S.total>=100
-  },
-
-  {
-    id:"perfect",
-    icon:"💎",
-    name:"Mukammal",
-    text:"Bir o‘yinni xatosiz tugatish",
-    check:()=>G.answered>0 &&
-      G.correct===G.answered &&
-      G.answered===G.p.length
-  },
-
-  {
-    id:"streak5",
-    icon:"🔥",
-    name:"Olov",
-    text:"5 ta ketma-ket to‘g‘ri javob",
-    check:()=>S.maxStreak>=5
-  },
-
-  {
-    id:"streak10",
-    icon:"⚡",
-    name:"Chaqmoq",
-    text:"10 ta ketma-ket to‘g‘ri javob",
-    check:()=>S.maxStreak>=10
-  },
-
-  {
-    id:"xp1000",
-    icon:"⭐",
-    name:"1000 XP",
-    text:"1000 XP yig‘ish",
-    check:()=>S.xp>=1000
-  },
-
-  {
-    id:"xp5000",
-    icon:"🌟",
-    name:"5000 XP",
-    text:"5000 XP yig‘ish",
-    check:()=>S.xp>=5000
-  },
-
-  {
-    id:"best",
-    icon:"🏆",
-    name:"Rekordchi",
-    text:"1000 ochko yig‘ish",
-    check:()=>S.best>=1000
-  }
-
-];
-
-function checkAchievements(){
-
-  let changed=false;
-
-  ACHIEVEMENTS.forEach(a=>{
-
-    if(S.medals.includes(a.id)) return;
-
-    try{
-
-      if(a.check()){
-
-        S.medals.push(a.id);
-
-        changed=true;
-
-        setTimeout(()=>{
-          toast(
-            a.icon+
-            " Yangi yutuq: "+
-            a.name
-          );
-        },100);
-
-      }
-
-    }catch(e){}
-
-  });
-
-  if(changed){
-    saveStats();
-  }
-
-}
-
-
-/* =========================
-   TOAST
-========================= */
-
-function toast(text){
-
-  const old=document.querySelector(".toast");
-
-  if(old) old.remove();
-
-  const el=document.createElement("div");
-
-  el.className="toast";
-
-  el.textContent=text;
-
-  document.body.appendChild(el);
-
-  setTimeout(()=>{
-    el.remove();
-  },2200);
+  return p[n%p.length];
 
 }
 
@@ -1195,379 +720,422 @@ function toast(text){
    BOSH SAHIFA
 ========================= */
 
-let selectedMode="klassik";
-let selectedCategory="all";
-let selectedDifficulty="orta";
-let selectedCount=10;
-
 function home(){
 
-  clearTimers();
+  const cats=[
+    "Hammasi",
+    ...Object.keys(Q)
+  ];
 
-  prepareDailyTasks();
+  const progress=S.xp%100;
+  const d=DIFFICULTY[difficulty];
 
-  const cats=getCategories();
-
-  const app=document.getElementById("app");
+  const pCount=pool().length;
 
   app.innerHTML=`
 
-    <div class="header">
+    <div class="top">
 
       <div class="logo">
-        🧠 Viktorina
+
+        <div class="logo-icon">
+          🧠
+        </div>
+
+        <div>
+          <h1>Viktorina</h1>
+          <p>Aqlingni sinab ko‘r</p>
+        </div>
+
       </div>
 
-      <div class="xp-mini"
-           onclick="profile()">
-        ⭐ ${S.xp} XP
+      <div class="profile">
+        👤
       </div>
 
     </div>
 
 
-    <div class="card hero">
+    <div class="hero">
 
-      <div class="hero-icon">🧠</div>
-
-      <h1>Viktorina</h1>
+      <div class="hero-title">
+        Salom, ${esc(U.first_name)}! 👋
+      </div>
 
       <div class="muted">
-        Bilimingizni sinang va darajangizni oshiring
+        Bugun nechta savolga javob bera olasan?
+      </div>
+
+      <div class="stats">
+
+        <div class="stat">
+          <b>⭐ ${S.xp}</b>
+          <span>XP</span>
+        </div>
+
+        <div class="stat">
+          <b>🏆 ${S.best}</b>
+          <span>Rekord</span>
+        </div>
+
+        <div class="stat">
+          <b>🎖 ${S.medals.length}</b>
+          <span>Yutuq</span>
+        </div>
+
+      </div>
+
+      <div class="level">
+
+        <div class="level-line">
+          <span>${lvl()}-daraja</span>
+          <span>${progress}/100 XP</span>
+        </div>
+
+        <div class="bar">
+          <i style="width:${progress}%"></i>
+        </div>
+
       </div>
 
     </div>
 
 
-    <div class="card">
+    <div class="section-title">
+      <h2>Kategoriya</h2>
+      <span>${pCount} ta savol</span>
+    </div>
 
-      <div class="section-title">
-        🎮 Rejim
-      </div>
 
-      <div class="mode-grid">
+    <div class="categories">
 
-        ${Object.entries(MODES).map(([id,m])=>`
+      ${cats.map(c=>`
 
-          <button
-            class="mode ${selectedMode===id?"active":""}"
-            onclick="selectMode('${id}')">
+        <button
+          class="chip ${c==cat?"active":""}"
+          onclick="setCategory('${esc(c)}')">
 
-            <div class="mode-icon">
-              ${m.icon}
-            </div>
+          ${esc(c)}
 
-            <div class="mode-name">
-              ${m.name}
-            </div>
+        </button>
 
-            <div class="mode-info">
-              ${m.info}
-            </div>
-
-          </button>
-
-        `).join("")}
-
-      </div>
+      `).join("")}
 
     </div>
 
 
-    ${
-      selectedMode!=="tezkor" &&
-      selectedMode!=="marafon" &&
-      selectedMode!=="kunlik"
-      ?`
+    <div class="section-title">
+      <h2>Qiyinchilik</h2>
+    </div>
 
-      <div class="card">
 
-        <div class="section-title">
-          📚 Kategoriya
+    <div class="categories">
+
+      <button
+        class="chip ${difficulty=="oson"?"active":""}"
+        onclick="setDifficulty('oson')">
+
+        🟢 Oson
+
+      </button>
+
+      <button
+        class="chip ${difficulty=="orta"?"active":""}"
+        onclick="setDifficulty('orta')">
+
+        🟡 O‘rta
+
+      </button>
+
+      <button
+        class="chip ${difficulty=="qiyin"?"active":""}"
+        onclick="setDifficulty('qiyin')">
+
+        🔴 Qiyin
+
+      </button>
+
+      <button
+        class="chip ${difficulty=="judaqiyin"?"active":""}"
+        onclick="setDifficulty('judaqiyin')">
+
+        🔥 Juda qiyin
+
+      </button>
+
+    </div>
+
+
+    <div class="diff-info">
+
+      ${d.name} · ${d.time} soniya ·
+      asosiy ${d.base} ball ·
+      tez javob uchun qo‘shimcha ball
+
+    </div>
+
+
+    <div class="section-title">
+      <h2>Savollar soni</h2>
+    </div>
+
+
+    <div class="categories">
+
+      <button
+        class="chip ${questionCount==10?"active":""}"
+        onclick="setCount(10)">
+
+        10 ta
+
+      </button>
+
+      <button
+        class="chip ${questionCount==20?"active":""}"
+        onclick="setCount(20)">
+
+        20 ta
+
+      </button>
+
+      <button
+        class="chip ${questionCount==30?"active":""}"
+        onclick="setCount(30)">
+
+        30 ta
+
+      </button>
+
+    </div>
+
+
+    <div class="section-title">
+      <h2>O‘yin rejimi</h2>
+    </div>
+
+
+    <div class="mode-grid">
+
+      <button
+        class="mode primary"
+        onclick="start('klassik')">
+
+        <div class="mode-icon">
+          🎯
         </div>
 
-        <div class="grid">
-
-          <button
-            class="select-btn ${selectedCategory==="all"?"active":""}"
-            onclick="selectCategory('all')">
-
-            🎲 Barchasi
-
-          </button>
-
-          ${cats.map(c=>`
-
-            <button
-              class="select-btn ${selectedCategory===c?"active":""}"
-              onclick="selectCategory('${escapeAttr(c)}')">
-
-              ${c}
-
-            </button>
-
-          `).join("")}
-
+        <div class="mode-title">
+          Klassik
         </div>
 
-      </div>
-
-      `
-      :""
-    }
-
-
-    ${
-      selectedMode!=="kunlik"
-      ?`
-
-      <div class="card">
-
-        <div class="section-title">
-          ⚙️ Qiyinchilik
+        <div class="mode-info">
+          ${questionCount} ta savol
         </div>
 
-        <div class="grid">
-
-          ${Object.entries(DIFFICULTY).map(([id,d])=>`
-
-            <button
-              class="select-btn ${selectedDifficulty===id?"active":""}"
-              onclick="selectDifficulty('${id}')">
-
-              ${d.name}<br>
-              <span class="muted">
-                ${d.time} soniya
-              </span>
-
-            </button>
-
-          `).join("")}
-
-        </div>
-
-      </div>
-
-      `
-      :""
-    }
+      </button>
 
 
-    ${
-      selectedMode==="klassik" ||
-      selectedMode==="kategoriya" ||
-      selectedMode==="aralash"
-      ?`
+      <button
+        class="mode"
+        onclick="start('tezkor')">
 
-      <div class="card">
-
-        <div class="section-title">
-          🔢 Savollar soni
-        </div>
-
-        <div class="grid">
-
-          ${[10,20,30].map(n=>`
-
-            <button
-              class="select-btn ${selectedCount===n?"active":""}"
-              onclick="selectCount(${n})">
-
-              ${n} ta
-
-            </button>
-
-          `).join("")}
-
-        </div>
-
-      </div>
-
-      `
-      :""
-    }
-
-
-    ${
-      selectedMode==="tezkor"
-      ?`
-
-      <div class="card" style="text-align:center">
-
-        <div style="font-size:35px">
+        <div class="mode-icon">
           ⚡
         </div>
 
-        <b>60 soniya</b>
-
-        <div class="muted">
-          Vaqt tugamaguncha imkon qadar ko‘p savolga javob bering.
+        <div class="mode-title">
+          Tezkor
         </div>
 
-      </div>
+        <div class="mode-info">
+          60 soniyada maksimal savol
+        </div>
 
-      `
-      :""
-    }
+      </button>
 
 
-    ${
-      selectedMode==="marafon"
-      ?`
+      <button
+        class="mode"
+        onclick="start('marafon')">
 
-      <div class="card" style="text-align:center">
-
-        <div style="font-size:35px">
+        <div class="mode-icon">
           🔥
         </div>
 
-        <b>Xato qilmaguncha davom etadi</b>
-
-        <div class="muted">
-          Birinchi xato o‘yinni tugatadi.
+        <div class="mode-title">
+          Marafon
         </div>
 
-      </div>
+        <div class="mode-info">
+          Xato qilmaguncha davom etadi
+        </div>
 
-      `
-      :""
-    }
+      </button>
 
 
-    ${
-      selectedMode==="kunlik"
-      ?`
+      <button
+        class="mode"
+        onclick="start('kunlik')">
 
-      <div class="card" style="text-align:center">
-
-        <div style="font-size:35px">
+        <div class="mode-icon">
           📅
         </div>
 
-        <b>Bugungi maxsus savol</b>
-
-        <div class="muted">
-          Kuniga faqat bir marta bajariladi.
+        <div class="mode-title">
+          Kunlik
         </div>
 
-      </div>
-
-      `
-      :""
-    }
-
-
-    <button
-      class="primary"
-      onclick="start(selectedMode)">
-
-      🚀 O‘yinni boshlash
-
-    </button>
-
-
-    <div style="height:10px"></div>
-
-
-    <div class="home-buttons">
-
-      <button
-        class="secondary"
-        onclick="profile()">
-
-        👤 Profil
+        <div class="mode-info">
+          Kuniga 1 ta · ×3 ball
+        </div>
 
       </button>
 
-      <button
-        class="secondary"
-        onclick="showAchievements()">
 
-        🏆 Yutuqlar
+      <button
+        class="mode"
+        onclick="start('kategoriya')">
+
+        <div class="mode-icon">
+          🎯
+        </div>
+
+        <div class="mode-title">
+          Kategoriya
+        </div>
+
+        <div class="mode-info">
+          ${esc(cat)} · ${questionCount} ta
+        </div>
 
       </button>
 
-      <button
-        class="secondary"
-        onclick="showTasks()">
 
-        📅 Topshiriqlar
+      <button
+        class="mode"
+        onclick="start('aralash')">
+
+        <div class="mode-icon">
+          🎲
+        </div>
+
+        <div class="mode-title">
+          Aralash
+        </div>
+
+        <div class="mode-info">
+          Barcha mavzulardan
+        </div>
 
       </button>
 
-      <button
-        class="secondary"
-        onclick="showBoard()">
 
-        🏅 Reyting
+      <button
+        class="mode"
+        onclick="start('jon')">
+
+        <div class="mode-icon">
+          ❤️
+        </div>
+
+        <div class="mode-title">
+          3 jon
+        </div>
+
+        <div class="mode-info">
+          Xato = 1 jon
+        </div>
 
       </button>
 
-      <button
-        class="secondary"
-        onclick="shareResult()">
+    </div>
 
-        📤 Ulashish
+
+    <div class="mode-description">
+
+      🎮 Rejimni tanlang va o‘yinni boshlang.
+      Tezkor rejimda 60 soniya ichida,
+      Marafonda esa birinchi xatogacha o‘ynaysiz.
+
+    </div>
+
+
+    <div class="bottom-grid">
+
+      <button
+        class="small-btn"
+        onclick="board()">
+
+        🏆<br>
+        Reyting
 
       </button>
 
-      <button
-        class="secondary"
-        onclick="feedback()">
 
-        💬 Fikr bildirish
+      <button
+        class="small-btn"
+        onclick="medals()">
+
+        🎖<br>
+        Yutuqlar
+
+      </button>
+
+
+      <button
+        class="small-btn"
+        onclick="fb()">
+
+        💬<br>
+        Taklif
 
       </button>
 
     </div>
 
   `;
+}
+
+
+function setCategory(c){
+
+  cat=c;
+  home();
 
 }
 
 
-function escapeAttr(str){
+function setDifficulty(d){
 
-  return String(str)
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'");
+  difficulty=d;
+  home();
+
+}
+
+
+function setCount(n){
+
+  questionCount=n;
+  home();
 
 }
 
 
 /* =========================
-   TANLOVLAR
+   TAKLIF
 ========================= */
 
-function selectMode(id){
+function fb(){
 
-  selectedMode=id;
+  try{
 
-  home();
+    tg.openTelegramLink(FEEDBACK_URL);
 
-}
+  }catch(e){
 
-function selectCategory(c){
+    open(FEEDBACK_URL);
 
-  selectedCategory=c;
-
-  home();
-
-}
-
-function selectDifficulty(d){
-
-  selectedDifficulty=d;
-
-  home();
-
-}
-
-function selectCount(n){
-
-  selectedCount=n;
-
-  home();
+  }
 
 }
 
@@ -1578,131 +1146,138 @@ function selectCount(n){
 
 function start(m){
 
-  clearTimers();
+  clearInterval(G.tm);
 
-  G={
-    m:m,
-    p:[],
-    i:0,
-    sc:0,
-    xp:0,
-    correct:0,
-    answered:0,
-    streak:0,
-    maxStreak:0,
-    lives:3,
-    time:0,
-    timer:null,
-    quickTimer:null,
-    quickLeft:60,
-    ended:false,
-    half:false,
-    skipped:0,
-    category:selectedCategory,
-    difficulty:selectedDifficulty
-  };
+  let source=[];
 
+  if(m=="kategoriya"){
 
-  const all=allPool();
-
-  if(!all.length){
-
-    alert(
-      "Savollar bazasi topilmadi."
-    );
-
-    return;
+    source=pool();
 
   }
 
+  else if(m=="aralash"){
 
-  if(m==="kunlik"){
+    source=allPool();
 
-    const today=todayKey();
+  }
 
-    if(S.dailyDone===today){
+  else if(m=="kunlik"){
+
+    if(S.day===todayKey()){
 
       alert(
-        "📅 Bugungi savol allaqachon bajarilgan."
+        "Bugungi savolga allaqachon javob berdingiz. Ertaga qaytib keling!"
       );
 
       return;
 
     }
 
-    const q=dailyQuestion();
+    const dq=dailyQuestion();
 
-    if(q){
-      G.p=[q];
+    if(!dq){
+
+      alert("Savol topilmadi.");
+
+      return;
+
     }
 
-  }
-
-
-  else if(m==="marafon"){
-
-    G.p=shuffle(
-      selectedCategory==="all"
-      ? all
-      : all.filter(
-          q=>q.category===selectedCategory
-        )
-    );
+    source=[dq];
 
   }
-
-
-  else if(m==="tezkor"){
-
-    G.p=shuffle(all);
-
-  }
-
 
   else{
 
-    let arr;
-
-    if(
-      m==="aralash" ||
-      selectedCategory==="all"
-    ){
-
-      arr=all;
-
-    }else{
-
-      arr=all.filter(
-        q=>q.category===selectedCategory
-      );
-
-    }
-
-    G.p=shuffle(arr).slice(
-      0,
-      Math.min(
-        selectedCount,
-        arr.length
-      )
-    );
+    source=pool();
 
   }
 
 
-  if(!G.p.length){
+  if(!source.length){
 
-    alert("Bu bo‘limda savollar topilmadi.");
+    alert("Savollar topilmadi.");
 
     return;
 
   }
 
 
-  if(m==="tezkor"){
+  let p=[];
 
-    G.quickLeft=60;
+
+  if(m=="kunlik"){
+
+    p=source.slice();
 
   }
+
+
+  else if(
+    m=="klassik"||
+    m=="kategoriya"||
+    m=="aralash"||
+    m=="jon"
+  ){
+
+    p=shuf(source).slice(
+      0,
+      Math.min(questionCount,source.length)
+    );
+
+  }
+
+
+  else if(
+    m=="tezkor"||
+    m=="marafon"
+  ){
+
+    p=shuf(source);
+
+  }
+
+
+  G={
+
+    m:m,
+
+    p:p,
+
+    source:source,
+
+    i:0,
+
+    sc:0,
+
+    lv:m=="jon"?3:99,
+
+    st:0,
+
+    ok:0,
+
+    answered:0,
+
+    h:1,
+
+    s:1,
+
+    lock:0,
+
+    time:DIFFICULTY[difficulty].time,
+
+    maxTime:DIFFICULTY[difficulty].time,
+
+    end:m=="tezkor"
+      ?Date.now()+60000
+      :0,
+
+    started:Date.now(),
+
+    finished:false
+
+  };
 
 
   ask();
@@ -1711,172 +1286,250 @@ function start(m){
 
 
 /* =========================
-   SAVOLNI KO‘RSATISH
+   SAVOL KO‘RSATISH
 ========================= */
 
 function ask(){
 
-  clearTimers();
-
-  if(G.ended) return;
+  if(G.finished)return;
 
 
-  if(G.i>=G.p.length){
+  if(
+    G.i>=G.p.length
+  ){
 
     if(
-      G.m==="marafon" ||
-      G.m==="tezkor"
+      G.m=="tezkor"||
+      G.m=="marafon"
     ){
 
-      const extra=shuffle(
-        selectedCategory==="all"
-        ? allPool()
-        : allPool().filter(
-            q=>q.category===selectedCategory
-          )
-      );
+      addMoreQuestions();
 
-      if(extra.length){
+    }
 
-        G.p.push(...extra);
+    else{
 
-      }else{
-
-        fin();
-
-        return;
-
-      }
-
-    }else{
-
-      fin();
-
-      return;
+      return fin();
 
     }
 
   }
 
 
+  if(
+    G.lv<1
+  ){
+
+    return fin();
+
+  }
+
+
+  if(
+    G.end&&
+    Date.now()>=G.end
+  ){
+
+    return fin();
+
+  }
+
+
   const q=G.p[G.i];
 
-  const d=DIFFICULTY[
-    G.difficulty
-  ]||DIFFICULTY.orta;
+  if(!q){
+
+    return fin();
+
+  }
 
 
-  let answers=shuffle([
-    q.correct,
-    ...q.wrong
-  ]);
+  const o=shuf(q.slice(1));
+
+  const d=DIFFICULTY[difficulty];
 
 
-  G.currentAnswers=answers;
+  G.q=q;
+
+  G.o=o;
+
+  G.t=d.time;
+
+  G.maxTime=d.time;
+
+  G.lock=0;
 
 
-  const app=document.getElementById("app");
+  let info="";
+
+
+  if(G.m=="tezkor"){
+
+    info=
+      `⚡ <span id="g">`+
+      `${Math.max(
+        0,
+        Math.ceil((G.end-Date.now())/1000)
+      )} s`+
+      `</span>`;
+
+  }
+
+
+  else if(G.m=="klassik"){
+
+    info=
+      `🎯 Savol ${G.i+1}/${G.p.length}`;
+
+  }
+
+
+  else if(G.m=="kategoriya"){
+
+    info=
+      `🎯 ${esc(cat)} · ${G.i+1}/${G.p.length}`;
+
+  }
+
+
+  else if(G.m=="aralash"){
+
+    info=
+      `🎲 Savol ${G.i+1}/${G.p.length}`;
+
+  }
+
+
+  else if(G.m=="jon"){
+
+    info=
+      "❤️".repeat(G.lv)+
+      ` · ${G.i+1}/${G.p.length}`;
+
+  }
+
+
+  else if(G.m=="marafon"){
+
+    info=
+      `🔥 ${G.i+1}-savol`;
+
+  }
+
+
+  else{
+
+    info="📅 Kunlik";
+
+  }
 
 
   app.innerHTML=`
 
-    <div class="header">
+    <button
+      class="back"
+      onclick="confirmHome()">
 
-      <div class="logo">
-        🧠 Viktorina
+      ← Chiqish
+
+    </button>
+
+
+    <div class="question-head">
+
+      <div class="question-number">
+
+        ${info}
+
       </div>
 
-      <div class="xp-mini">
+
+      <div class="score">
+
         ⭐ ${G.sc}
+
       </div>
+
+    </div>
+
+
+    ${
+      G.m=="tezkor"
+
+      ?
+
+      `
+
+        <div
+          class="diff-info"
+          style="margin-top:0;margin-bottom:10px">
+
+          ⚡ Umumiy vaqt:
+          <span
+            id="g2"
+            class="quick-time">
+
+            ${Math.max(
+              0,
+              Math.ceil((G.end-Date.now())/1000)
+            )} soniya
+
+          </span>
+
+        </div>
+
+      `
+
+      :
+
+      ""
+
+    }
+
+
+    <div class="timer">
+
+      <i
+        id="b"
+        style="width:100%">
+
+      </i>
 
     </div>
 
 
     <div class="card">
 
-      <div class="question-top">
+      <div class="muted">
 
-        <div class="badge">
-          ${
-            G.m==="tezkor"
-            ? "⚡ TEZKOR"
-            : G.m==="marafon"
-            ? "🔥 MARAFON"
-            : G.m==="kunlik"
-            ? "📅 KUNLIK"
-            : "Savol "+(G.i+1)
-          }
-        </div>
-
-        <div
-          id="timer"
-          class="timer">
-
-          ${
-            G.m==="tezkor"
-            ? G.quickLeft
-            : d.time
-          }
-
-        </div>
+        ${d.name}
+        ·
+        ${d.time} soniya
 
       </div>
-
-
-      ${
-        G.m==="tezkor"
-        ?`
-
-        <div class="progress">
-          <div
-            id="progressBar"
-            class="progress-bar"
-            style="width:${Math.max(
-              0,
-              G.quickLeft/60*100
-            )}%">
-          </div>
-        </div>
-
-        `
-        :`
-
-        <div class="progress">
-
-          <div
-            class="progress-bar"
-            style="width:${
-              G.p.length
-              ? (G.i/G.p.length)*100
-              : 0
-            }%">
-
-          </div>
-
-        </div>
-
-        `
-      }
 
 
       <div class="question">
-        ${q.q}
+
+        ${esc(q[0])}
+
       </div>
 
 
-      <div
-        id="answers"
-        class="answers">
+      <div class="answers">
 
-        ${answers.map((a,index)=>`
+        ${o.map((x,k)=>`
 
           <button
             class="answer"
-            id="ans${index}"
-            onclick="pick(${index})">
+            id="o${k}"
+            onclick="pick(${k})">
 
-            ${a}
+            <b>
+              ${String.fromCharCode(65+k)}.
+            </b>
+
+            ${esc(x)}
 
           </button>
 
@@ -1888,70 +1541,23 @@ function ask(){
       <div class="tools">
 
         <button
-          class="tool"
-          onclick="half()">
+          id="h"
+          onclick="half()"
+          ${G.h?"":"disabled"}>
 
           ✂️ 50/50
 
         </button>
 
-        ${
-          G.m!=="kunlik"
-          ?`
 
-          <button
-            class="tool"
-            onclick="skip()">
+        <button
+          id="s"
+          onclick="skip()"
+          ${G.s?"":"disabled"}>
 
-            ⏭ O‘tkazish
+          ⏭ O‘tkazish
 
-          </button>
-
-          `
-          :`
-          <button
-            class="tool"
-            onclick="skip()">
-
-            ⏭ O‘tkazish
-
-          </button>
-          `
-        }
-
-      </div>
-
-
-      ${
-        G.m==="jon"
-        ?`
-
-        <div class="score-line">
-
-          <span>
-            ❤️ Jonlar
-          </span>
-
-          <span>
-            ${"❤️".repeat(G.lives)}
-          </span>
-
-        </div>
-
-        `
-        :""
-      }
-
-
-      <div class="score-line">
-
-        <span>
-          🔥 Seriya: ${G.streak}
-        </span>
-
-        <span>
-          🏆 ${G.sc}
-        </span>
+        </button>
 
       </div>
 
@@ -1960,111 +1566,124 @@ function ask(){
   `;
 
 
-  if(G.m==="tezkor"){
+  clearInterval(G.tm);
 
-    startQuickTimer();
-
-  }else{
-
-    startQuestionTimer(d.time);
-
-  }
+  G.tm=setInterval(
+    tick,
+    1000
+  );
 
 }
 
 
 /* =========================
-   VAQT
+   TEZKOR / MARAFON UCHUN
+   SAVOLLARNI DAVOM ETTIRISH
 ========================= */
 
-function clearTimers(){
+function addMoreQuestions(){
 
-  if(G.timer){
-    clearInterval(G.timer);
-    G.timer=null;
+  if(
+    !G.source||
+    !G.source.length
+  ){
+
+    return fin();
+
   }
 
-  if(G.quickTimer){
-    clearInterval(G.quickTimer);
-    G.quickTimer=null;
-  }
+
+  const more=shuf(G.source);
+
+  G.p=G.p.concat(more);
 
 }
 
-function startQuestionTimer(seconds){
 
-  G.time=seconds;
+/* =========================
+   TIMER
+========================= */
 
-  const el=document.getElementById("timer");
+function tick(){
 
-  G.timer=setInterval(()=>{
+  if(G.finished)return;
 
-    G.time--;
 
-    if(el){
+  if(
+    G.end&&
+    Date.now()>=G.end
+  ){
 
-      el.textContent=G.time;
+    clearInterval(G.tm);
 
-      if(G.time<=5){
-        el.classList.add("danger");
-      }
+    return fin();
 
-    }
+  }
 
-    if(G.time<=0){
 
-      clearInterval(G.timer);
+  G.t--;
 
-      timeoutAnswer();
 
-    }
+  const b=$("b");
 
-  },1000);
 
-}
+  if(b){
 
-function startQuickTimer(){
+    b.style.width=
+      Math.max(
+        0,
+        G.t/G.maxTime*100
+      )+"%";
 
-  const el=document.getElementById("timer");
+  }
 
-  G.quickTimer=setInterval(()=>{
 
-    G.quickLeft--;
+  if(G.end){
 
-    if(el){
+    const remain=Math.max(
+      0,
+      Math.ceil(
+        (G.end-Date.now())/1000
+      )
+    );
 
-      el.textContent=G.quickLeft;
 
-      if(G.quickLeft<=10){
-        el.classList.add("danger");
-      }
+    const g=$("g");
 
-    }
+    if(g){
 
-    const bar=
-      document.getElementById(
-        "progressBar"
-      );
-
-    if(bar){
-
-      bar.style.width=
-        Math.max(
-          0,
-          G.quickLeft/60*100
-        )+"%";
+      g.textContent=
+        remain+" s";
 
     }
 
-    if(G.quickLeft<=0){
 
-      clearInterval(G.quickTimer);
+    const g2=$("g2");
 
-      fin();
+    if(g2){
+
+      g2.textContent=
+        remain+" soniya";
 
     }
 
-  },1000);
+
+    if(remain<=0){
+
+      clearInterval(G.tm);
+
+      return fin();
+
+    }
+
+  }
+
+
+  if(G.t<=0){
+
+    pick(-1);
+
+  }
 
 }
 
@@ -2075,96 +1694,77 @@ function startQuickTimer(){
 
 function pick(k){
 
-  if(G.ended) return;
+  if(G.lock||G.finished)return;
 
-  const buttons=
-    document.querySelectorAll(".answer");
 
-  buttons.forEach(b=>{
-    b.disabled=true;
+  G.lock=1;
+
+  clearInterval(G.tm);
+
+
+  const good=
+    k>=0 &&
+    G.o[k]===G.q[1];
+
+
+  G.o.forEach((x,j)=>{
+
+    const e=$("o"+j);
+
+    if(!e)return;
+
+    e.disabled=true;
+
+
+    if(x===G.q[1]){
+
+      e.classList.add(
+        "correct"
+      );
+
+    }
+
   });
 
-  clearTimers();
 
+  if(k>=0&&!good){
 
-  const q=G.p[G.i];
+    const e=$("o"+k);
 
-  const chosen=
-    G.currentAnswers[k];
+    if(e){
 
-  const correct=
-    chosen===q.correct;
+      e.classList.add(
+        "wrong"
+      );
+
+    }
+
+  }
 
 
   G.answered++;
 
 
-  buttons.forEach((b,index)=>{
+  if(good){
 
-    if(
-      G.currentAnswers[index]===q.correct
-    ){
+    G.st++;
 
-      b.classList.add("correct");
-
-    }
-
-  });
-
-
-  if(correct){
-
-    buttons[k].classList.add("correct");
-
-    G.correct++;
-
-    G.streak++;
-
-    if(G.streak>G.maxStreak){
-      G.maxStreak=G.streak;
-    }
+    G.ok++;
 
 
     const d=
-      DIFFICULTY[
-        G.difficulty
-      ]||DIFFICULTY.orta;
+      DIFFICULTY[difficulty];
 
 
     const base=d.base;
 
-
-    let speedBonus=0;
-
-    if(G.m==="tezkor"){
-
-      speedBonus=
-        Math.min(
-          10,
-          Math.max(
-            0,
-            Math.floor(G.quickLeft/10)
-          )
-        );
-
-    }else{
-
-      speedBonus=
-        Math.max(
-          0,
-          G.time
-        );
-
-    }
-
+    const speedBonus=
+      Math.max(0,G.t);
 
     const streakBonus=
       Math.min(
-        20,
-        Math.max(
-          0,
-          (G.streak-1)*2
-        )
+        G.st*2,
+        20
       );
 
 
@@ -2174,147 +1774,105 @@ function pick(k){
       streakBonus;
 
 
-    if(G.m==="kunlik"){
+    if(G.m=="kunlik"){
+
       points*=3;
+
     }
 
 
-    points=Math.round(points);
+    /*
+      Qiyinlik ko‘paytirgichi
+      ham hisobga olinadi.
+    */
+
+    points=Math.round(
+      points*d.mult
+    );
 
 
     G.sc+=points;
 
-    G.xp+=points;
+
+    vib("success");
 
 
-    toast(
-      "✅ To‘g‘ri! +"+
-      points+
-      " ochko"
-    );
+    if(G.st==3){
+
+      award(
+        "🔥 3 ketma-ket javob"
+      );
+
+    }
 
 
-    setTimeout(()=>{
+    if(G.st==5){
 
-      G.i++;
+      award(
+        "🔥 5 ketma-ket javob"
+      );
 
-      ask();
+    }
 
-    },550);
+
+    if(G.st==10){
+
+      award(
+        "👑 10 ketma-ket javob"
+      );
+
+    }
 
   }
 
-
   else{
 
-    buttons[k].classList.add("wrong");
-
-    G.streak=0;
+    G.st=0;
 
 
-    if(G.m==="marafon"){
+    if(G.m=="jon"){
 
-      toast(
-        "❌ Xato! Marafon tugadi."
-      );
+      G.lv--;
+
+    }
+
+
+    vib("error");
+
+
+    /*
+      Marafonda birinchi xato
+      o‘yinni darhol tugatadi.
+    */
+
+    if(G.m=="marafon"){
 
       setTimeout(
         fin,
-        650
+        600
       );
 
       return;
 
     }
 
-
-    if(G.m==="jon"){
-
-      G.lives--;
-
-      toast(
-        "❌ Xato! Qolgan jon: "+
-        G.lives
-      );
-
-
-      if(G.lives<=0){
-
-        setTimeout(
-          fin,
-          650
-        );
-
-        return;
-
-      }
-
-    }else{
-
-      toast("❌ Xato!");
-
-    }
-
-
-    setTimeout(()=>{
-
-      G.i++;
-
-      ask();
-
-    },650);
-
   }
 
-}
 
+  /*
+    Tezkor rejimda umumiy 60 soniya
+    tugagan bo‘lsa, keyingi savolga
+    o‘tmaymiz.
+  */
 
-/* =========================
-   VAQT TUGASHI
-========================= */
-
-function timeoutAnswer(){
-
-  if(G.ended) return;
-
-  G.answered++;
-
-  G.streak=0;
-
-
-  const q=G.p[G.i];
-
-  const buttons=
-    document.querySelectorAll(".answer");
-
-
-  buttons.forEach(b=>{
-    b.disabled=true;
-  });
-
-
-  buttons.forEach((b,index)=>{
-
-    if(
-      G.currentAnswers[index]===q.correct
-    ){
-
-      b.classList.add("correct");
-
-    }
-
-  });
-
-
-  if(G.m==="marafon"){
-
-    toast(
-      "⏰ Vaqt tugadi! Marafon tugadi."
-    );
+  if(
+    G.end&&
+    Date.now()>=G.end
+  ){
 
     setTimeout(
       fin,
-      650
+      600
     );
 
     return;
@@ -2322,34 +1880,13 @@ function timeoutAnswer(){
   }
 
 
-  if(G.m==="jon"){
-
-    G.lives--;
-
-    if(G.lives<=0){
-
-      setTimeout(
-        fin,
-        650
-      );
-
-      return;
-
-    }
-
-  }
+  G.i++;
 
 
-  toast("⏰ Vaqt tugadi!");
-
-
-  setTimeout(()=>{
-
-    G.i++;
-
-    ask();
-
-  },650);
+  setTimeout(
+    ask,
+    850
+  );
 
 }
 
@@ -2360,10 +1897,918 @@ function timeoutAnswer(){
 
 function half(){
 
-  if(G.half){
+  if(!G.h||G.lock)return;
 
-    toast(
-      "✂️ 50/50 bu savolda ishlatildi."
+
+  G.h=0;
+
+
+  const h=$("h");
+
+  if(h){
+
+    h.disabled=true;
+
+  }
+
+
+  let n=0;
+
+
+  G.o.forEach((x,j)=>{
+
+    if(
+      x!==G.q[1]&&
+      n<2
+    ){
+
+      n++;
+
+
+      const e=$("o"+j);
+
+
+      if(e){
+
+        e.disabled=true;
+
+        e.style.opacity=".2";
+
+      }
+
+    }
+
+  });
+
+}
+
+
+/* =========================
+   O‘TKAZISH
+========================= */
+
+function skip(){
+
+  if(!G.s||G.lock)return;
+
+
+  G.s=0;
+
+  clearInterval(G.tm);
+
+
+  G.i++;
+
+
+  /*
+    Tezkor va marafonda
+    savol tugab qolmasligi uchun.
+  */
+
+  if(
+    G.i>=G.p.length&&
+    (
+      G.m=="tezkor"||
+      G.m=="marafon"
+    )
+  ){
+
+    addMoreQuestions();
+
+  }
+
+
+  ask();
+
+}
+
+
+/* =========================
+   CHIQISH
+========================= */
+
+function confirmHome(){
+
+  if(
+    confirm(
+      "O‘yindan chiqmoqchimisiz?"
+    )
+  ){
+
+    clearInterval(G.tm);
+
+    G.finished=true;
+
+    home();
+
+  }
+
+}
+
+
+/* =========================
+   O‘YIN TUGASHI
+========================= */
+
+function fin(){
+
+  if(G.finished)return;
+
+
+  G.finished=true;
+
+  clearInterval(G.tm);
+
+
+  /*
+    Kunlik savol faqat javob berilgandan
+    keyin ishlatilgan deb belgilanadi.
+  */
+
+  if(
+    G.m=="kunlik"&&
+    G.answered>0
+  ){
+
+    S.day=todayKey();
+
+  }
+
+
+  const xp=
+    Math.max(
+      5,
+      Math.round(G.sc/2)
     );
 
+
+  const nb=
+    G.sc>S.best;
+
+
+  S.xp+=xp;
+
+
+  if(nb){
+
+    S.best=G.sc;
+
+  }
+
+
+  /*
+    Mukammal natija faqat
+    Klassik / Kategoriya / Aralash
+    kabi cheklangan savolli rejimlarda.
+  */
+
+  if(
+    (
+      G.m=="klassik"||
+      G.m=="kategoriya"||
+      G.m=="aralash"
+    )&&
+    G.answered>0&&
+    G.ok==G.answered&&
+    G.answered==G.p.length
+  ){
+
+    award(
+      "💯 Mukammal natija"
+    );
+
+  }
+
+
+  if(G.sc>=250){
+
+    award(
+      "🚀 250+ ball"
+    );
+
+  }
+
+
+  if(G.sc>=500){
+
+    award(
+      "💎 500+ ball"
+    );
+
+  }
+
+
+  if(G.ok>=10){
+
+    award(
+      "🧠 10 ta to‘g‘ri"
+    );
+
+  }
+
+
+  /*
+    Marafonda 10+ ketma-ket
+    alohida yutuq.
+  */
+
+  if(
+    G.m=="marafon"&&
+    G.ok>=10
+  ){
+
+    award(
+      "🔥 Marafon 10+"
+    );
+
+  }
+
+
+  save();
+
+  submit(G.sc);
+
+
+  const wrong=
+    Math.max(
+      0,
+      G.answered-G.ok
+    );
+
+
+  let title="O‘yin tugadi!";
+
+  let icon="🎉";
+
+
+  if(nb){
+
+    title="Yangi rekord!";
+
+    icon="🏆";
+
+  }
+
+
+  if(G.m=="marafon"){
+
+    title=
+      G.ok>0
+      ?"Marafon tugadi!"
+      :"Marafon boshlandi-yu tugadi!";
+
+    icon="🔥";
+
+  }
+
+
+  if(G.m=="kunlik"){
+
+    title="Kunlik natija!";
+
+    icon="📅";
+
+  }
+
+
+  if(G.m=="tezkor"){
+
+    title="Vaqt tugadi!";
+
+    icon="⚡";
+
+  }
+
+
+  app.innerHTML=`
+
+    <div class="result">
+
+      <div class="result-icon">
+
+        ${icon}
+
+      </div>
+
+
+      <h1>
+
+        ${title}
+
+      </h1>
+
+
+      <p class="muted">
+
+        ${esc(U.first_name)}
+
+      </p>
+
+
+      <div class="result-score">
+
+        ${G.sc}
+
+      </div>
+
+
+      <div class="result-stats">
+
+        <div class="result-stat">
+
+          <b>${G.ok}</b>
+
+          <span>
+            To‘g‘ri
+          </span>
+
+        </div>
+
+
+        <div class="result-stat">
+
+          <b>
+            ${wrong}
+          </b>
+
+          <span>
+            Xato
+          </span>
+
+        </div>
+
+
+        <div class="result-stat">
+
+          <b>
+            +${xp}
+          </b>
+
+          <span>
+            XP
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <br>
+
+
+      <div class="card">
+
+        <div class="level-line">
+
+          <span>
+            🏅 ${lvl()}-daraja
+          </span>
+
+          <span>
+            ${S.xp%100}/100 XP
+          </span>
+
+        </div>
+
+
+        <div class="bar">
+
+          <i
+            style="width:${S.xp%100}%">
+
+          </i>
+
+        </div>
+
+      </div>
+
+
+      ${
+        G.m=="marafon"
+
+        ?
+
+        `
+
+          <div class="diff-info">
+
+            🔥 Marafon:
+            ${G.ok} ta savol ketma-ket to‘g‘ri.
+
+          </div>
+
+        `
+
+        :
+
+        ""
+
+      }
+
+
+      ${
+        G.m=="tezkor"
+
+        ?
+
+        `
+
+          <div class="diff-info">
+
+            ⚡ 60 soniyada
+            ${G.answered} ta savolga javob berdingiz.
+
+          </div>
+
+        `
+
+        :
+
+        ""
+
+      }
+
+
+      <button
+        onclick="share()">
+
+        📤 Do‘stlarga ulashish
+
+      </button>
+
+
+      <button
+        onclick="start(G.m)">
+
+        🔁 Qayta o‘ynash
+
+      </button>
+
+
+      <button
+        onclick="home()">
+
+        🏠 Bosh sahifa
+
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   ULASHISH
+========================= */
+
+function share(){
+
+  const u=
+    "https://t.me/share/url?url="+
+    encodeURIComponent(APP_LINK)+
+    "&text="+
+    encodeURIComponent(
+      `Viktorinada ${G.sc} ball to‘pladim! Mendan o‘zib keta olasanmi?`
+    );
+
+
+  try{
+
+    tg.openTelegramLink(u);
+
+  }catch(e){
+
+    open(u);
+
+  }
+
+}
+
+
+/* =========================
+   YUTUQLAR
+========================= */
+
+function medals(){
+
+  app.innerHTML=`
+
+    <button
+      class="back"
+      onclick="home()">
+
+      ← Orqaga
+
+    </button>
+
+
+    <div class="hero">
+
+      <div class="hero-title">
+        🎖 Yutuqlar
+      </div>
+
+      <div class="muted">
+        O‘yinda erishgan natijalaringiz
+      </div>
+
+    </div>
+
+
+    ${
+      S.medals.length
+      ?
+
+      S.medals.map(m=>`
+
+        <div class="card">
+
+          ${esc(m)}
+
+        </div>
+
+      `).join("")
+
+      :
+
+      `
+
+        <div class="empty">
+
+          <div style="font-size:45px">
+            🏆
+          </div>
+
+          <br>
+
+          Hali yutuq yo‘q.
+
+          <br>
+
+          O‘ynang va yutuqlarni
+          qo‘lga kiriting!
+
+        </div>
+
+      `
+    }
+
+  `;
+
+}
+
+
+/* =========================
+   FIRESTORE
+========================= */
+
+const FS=()=>
+  `https://firestore.googleapis.com/v1/projects/${FB_PROJECT}/databases/(default)/documents`;
+
+
+const wk=()=>{
+
+  const d=new Date();
+
+  const start=new Date(
+    d.getFullYear(),
+    0,
+    1
+  );
+
+  const day=
+    Math.floor(
+      (d-start)/864e5
+    )+1;
+
+  const week=
+    Math.ceil(day/7);
+
+  return d.getFullYear()+"w"+week;
+
+};
+
+
+async function put(col,sc){
+
+  try{
+
+    await fetch(
+
+      `${FS()}/${col}/${U.id}?key=${FB_KEY}`+
+      `&updateMask.fieldPaths=name`+
+      `&updateMask.fieldPaths=score`,
+
+      {
+
+        method:"PATCH",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:JSON.stringify({
+
+          fields:{
+
+            name:{
+              stringValue:
+                U.first_name
+            },
+
+            score:{
+              integerValue:
+                String(sc)
+            }
+
+          }
+
+        })
+
+      }
+
+    );
+
+  }catch(e){}
+
+}
+
+
+function submit(sc){
+
+  if(
+    !FB_PROJECT||
+    !U.id
+  )return;
+
+
+  if(
+    !S.wk||
+    S.wk.k!=wk()
+  ){
+
+    S.wk={
+      k:wk(),
+      b:0
+    };
+
+  }
+
+
+  if(sc>S.wk.b){
+
+    S.wk.b=sc;
+
+    put(
+      "w"+wk(),
+      sc
+    );
+
+  }
+
+
+  if(sc>=S.best){
+
+    put(
+      "all",
+      sc
+    );
+
+  }
+
+
+  save();
+
+}
+
+
+/* =========================
+   REYTING
+========================= */
+
+async function board(col){
+
+  col=col||"w"+wk();
+
+
+  app.innerHTML=`
+
+    <button
+      class="back"
+      onclick="home()">
+
+      ← Orqaga
+
+    </button>
+
+
+    <div class="hero">
+
+      <div class="hero-title">
+        🏆 Reyting
+      </div>
+
+      <div class="muted">
+        Eng yuqori natijalar
+      </div>
+
+    </div>
+
+
+    <div class="bottom-grid">
+
+      <button
+        class="small-btn"
+        onclick="board()">
+
+        📅<br>
+        Haftalik
+
+      </button>
+
+
+      <button
+        class="small-btn"
+        onclick="board('all')">
+
+        🌎<br>
+        Umumiy
+
+      </button>
+
+
+      <button
+        class="small-btn"
+        onclick="home()">
+
+        🏠<br>
+        Bosh sahifa
+
+      </button>
+
+    </div>
+
+
+    <div
+      id="bd"
+      class="empty">
+
+      Yuklanmoqda…
+
+    </div>
+
+  `;
+
+
+  if(!FB_PROJECT){
+
+    $("bd").innerHTML=`
+
+      <div style="font-size:40px">
+        🏆
+      </div>
+
+      <br>
+
+      Reyting tizimi
+      tez orada ishga tushadi.
+
+    `;
+
     return;
+
+  }
+
+
+  try{
+
+    const r=await fetch(
+
+      FS()+":runQuery?key="+FB_KEY,
+
+      {
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:JSON.stringify({
+
+          structuredQuery:{
+
+            from:[
+              {
+                collectionId:col
+              }
+            ],
+
+            orderBy:[
+              {
+                field:{
+                  fieldPath:"score"
+                },
+
+                direction:
+                  "DESCENDING"
+
+              }
+            ],
+
+            limit:10
+
+          }
+
+        })
+
+      }
+
+    );
+
+
+    const L=
+      (await r.json())
+      .filter(x=>x.document)
+      .map(
+        x=>x.document.fields
+      );
+
+
+    $("bd").innerHTML=
+      L.length
+
+      ?
+
+      L.map((f,i)=>`
+
+        <div class="card rank">
+
+          <div class="rank-num">
+
+            ${
+              i==0?"🥇":
+              i==1?"🥈":
+              i==2?"🥉":
+              (i+1)+"."
+            }
+
+          </div>
+
+
+          <div class="rank-name">
+
+            ${esc(
+              f.name.stringValue
+            )}
+
+          </div>
+
+
+          <div class="rank-score">
+
+            ${f.score.integerValue}
+
+          </div>
+
+        </div>
+
+      `).join("")
+
+      :
+
+      `
+
+        <div class="empty">
+
+          Hozircha hech kim yo‘q.
+
+        </div>
+
+      `;
+
+
+  }catch(e){
+
+    $("bd").textContent=
+      "Reytingni yuklab bo‘lmadi.";
+
+  }
+
+}
+
+
+/* =========================
+   BOSHLASH
+========================= */
+
+home();
+
+</script>
+
+</body>
+</html>
