@@ -509,14 +509,9 @@ try{
 /* =========================================================
    5-BOSQICH — FASTAPI + POSTGRESQL
    Backend ishlamasa ham o‘yin ishlayveradi.
-   
-   Backend joylashtirilgandan keyin faqat shu manzilni yozasiz:
-   const API_URL="https://SIZNING-BACKEND-MANZILINGIZ";
-   
-   Hozir bo‘sh turgani sababli eski o‘yin buzilmaydi.
 ========================================================= */
 
-const API_URL="";
+const API_URL="https://viktorina-api.onrender.com";
 
 
 const FEEDBACK_URL="https://t.me/SIZNING_USERNAME";
@@ -1488,12 +1483,6 @@ function start(m){
   };
 
 
-  /*
-    O‘yin darhol ochiladi.
-    Serverga yozish esa orqada bajariladi.
-    Server xatosi o‘yinni buzmaydi.
-  */
-
   ask();
 
   backendStart();
@@ -2303,12 +2292,6 @@ function fin(){
   save();
 
 
-  /*
-    5-bosqich:
-    natija PostgreSQL serveriga yuboriladi.
-    Xatolik bo‘lsa ham natija ekranga chiqadi.
-  */
-
   backendFinish(
     G.sc,
     xp
@@ -2784,8 +2767,6 @@ function submit(sc){
 
 /* =========================================================
    REYTING
-   Avval PostgreSQL backend tekshiriladi.
-   Ishlamasa eski Firestore ishlaydi.
 ========================================================= */
 
 async function board(col){
@@ -2862,11 +2843,6 @@ async function board(col){
   `;
 
 
-  /*
-    5-bosqich:
-    PostgreSQL reytingi.
-  */
-
   const backend=
     await api(
       "/api/leaderboard?limit=20"
@@ -2941,10 +2917,6 @@ async function board(col){
 
   }
 
-
-  /*
-    Backend ishlamasa eski reyting.
-  */
 
   if(!FB_PROJECT){
 
@@ -3097,11 +3069,6 @@ async function board(col){
 ========================================================= */
 
 home();
-
-/*
-  Serverga foydalanuvchini yozish.
-  Xato bo‘lsa sahifa baribir ishlaydi.
-*/
 
 backendRegister();
 
