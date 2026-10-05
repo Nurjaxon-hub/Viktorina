@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import (
@@ -15,8 +15,14 @@ from sqlalchemy import (
     ForeignKey,
     Text,
     func,
+    text,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker
+
+
+# =========================
+# DATABASE
+# =========================
 
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 
@@ -45,7 +51,7 @@ Base = declarative_base()
 
 
 # =========================
-# DATABASE MODELS
+# MODELS
 # =========================
 
 class User(Base):
@@ -54,16 +60,13 @@ class User(Base):
     telegram_id = Column(BigInteger, primary_key=True)
     first_name = Column(String(255), nullable=False, default="Mehmon")
     username = Column(String(255), nullable=True)
-
     xp = Column(Integer, nullable=False, default=0)
     best_score = Column(Integer, nullable=False, default=0)
-
     created_at = Column(
         DateTime,
         nullable=False,
         default=lambda: datetime.now(timezone.utc)
     )
-
     updated_at = Column(
         DateTime,
         nullable=False,
@@ -75,29 +78,23 @@ class Game(Base):
     __tablename__ = "games"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-
     telegram_id = Column(
         BigInteger,
         ForeignKey("users.telegram_id"),
         nullable=False
     )
-
     mode = Column(String(50), nullable=False)
     category = Column(String(100), nullable=True)
     difficulty = Column(String(50), nullable=True)
-
     question_count = Column(Integer, nullable=False, default=0)
     answered = Column(Integer, nullable=False, default=0)
     correct = Column(Integer, nullable=False, default=0)
-
     score = Column(Integer, nullable=False, default=0)
-
     started_at = Column(
         DateTime,
         nullable=False,
         default=lambda: datetime.now(timezone.utc)
     )
-
     finished_at = Column(DateTime, nullable=True)
 
 
@@ -105,24 +102,15 @@ class Question(Base):
     __tablename__ = "questions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-
     question = Column(Text, nullable=False)
-
     option_a = Column(Text, nullable=False)
     option_b = Column(Text, nullable=False)
     option_c = Column(Text, nullable=False)
     option_d = Column(Text, nullable=False)
-
     correct_answer = Column(String(1), nullable=False)
-
     difficulty = Column(String(50), nullable=True)
     category = Column(String(100), nullable=True)
-
-    created_at = Column(
-        DateTime,
-        nullable=False,
-        default=lambda: datetime.now(timezone.utc)
-    )
+    created_at = Column(DateTime, nullable=True)
 
 
 Base.metadata.create_all(bind=engine)
@@ -142,7 +130,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 
@@ -167,11 +155,9 @@ class GameStartRequest(BaseModel):
 class GameFinishRequest(BaseModel):
     telegram_id: int
     game_id: int
-
     score: int = 0
     correct: int = 0
     answered: int = 0
-
     xp: int = 0
 
 
@@ -194,11 +180,10 @@ def root():
 
 @app.get("/api/health")
 def health():
-
     db = SessionLocal()
 
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
 
         return {
             "ok": True,
@@ -217,148 +202,23 @@ def health():
 
 
 # =========================
-# QUESTIONS
-# =========================
-
-@app.get("/api/questions")
-def get_questions(
-    count: int = Query(default=10, ge=1, le=100),
-    category: Optional[str] = None,
-    difficulty: Optional[str] = None
-):
-
-    db = SessionLocal()
-
-    try:
-        query = db.query(Question)
-
-        if category:
-            query = query.filter(
-                Question.category == category
-            )
-
-        if difficulty:
-            query = query.filter(
-                Question.difficulty == difficulty
-            )
-
-        questions = (
-            query
-            .order_by(func.random())
-            .limit(count)
-            .all()
-        )
-
-        result = []
-
-        for q in questions:
-            result.append({
-                "id": q.id,
-                "question": q.question,
-                "options": [
-                    q.option_a,
-                    q.option_b,
-                    q.option_c,
-                    q.option_d
-                ],
-                "difficulty": q.difficulty,
-                "category": q.category
-            })
-
-        return {
-            "ok": True,
-            "count": len(result),
-            "items": result
-        }
-
-    finally:
-        db.close()
-
-
-# =========================
-# QUESTION CATEGORIES
-# =========================
-
-@app.get("/api/questions/categories")
-def get_categories():
-
-    db = SessionLocal()
-
-    try:
-        rows = (
-            db.query(Question.category)
-            .filter(Question.category.isnot(None))
-            .distinct()
-            .order_by(Question.category)
-            .all()
-        )
-
-        categories = [
-            row[0]
-            for row in rows
-            if row[0]
-        ]
-
-        return {
-            "ok": True,
-            "items": categories
-        }
-
-    finally:
-        db.close()
-
-
-# =========================
-# QUESTION DIFFICULTIES
-# =========================
-
-@app.get("/api/questions/difficulties")
-def get_difficulties():
-
-    db = SessionLocal()
-
-    try:
-        rows = (
-            db.query(Question.difficulty)
-            .filter(Question.difficulty.isnot(None))
-            .distinct()
-            .order_by(Question.difficulty)
-            .all()
-        )
-
-        difficulties = [
-            row[0]
-            for row in rows
-            if row[0]
-        ]
-
-        return {
-            "ok": True,
-            "items": difficulties
-        }
-
-    finally:
-        db.close()
-
-
-# =========================
 # USER
 # =========================
 
 @app.post("/api/user")
 def create_or_update_user(data: UserRequest):
-
     db = SessionLocal()
 
     try:
-        user = db.query(User).filter(
-            User.telegram_id == data.telegram_id
-        ).first()
+        user = (
+            db.query(User)
+            .filter(User.telegram_id == data.telegram_id)
+            .first()
+        )
 
         now = datetime.now(timezone.utc)
 
         if user is None:
-
             user = User(
                 telegram_id=data.telegram_id,
                 first_name=data.first_name or "Mehmon",
@@ -372,11 +232,7 @@ def create_or_update_user(data: UserRequest):
             db.add(user)
 
         else:
-
-            user.first_name = (
-                data.first_name or user.first_name
-            )
-
+            user.first_name = data.first_name or user.first_name
             user.username = data.username
             user.updated_at = now
 
@@ -397,22 +253,21 @@ def create_or_update_user(data: UserRequest):
 
 
 # =========================
-# GAME START
+# START GAME
 # =========================
 
 @app.post("/api/game/start")
 def start_game(data: GameStartRequest):
-
     db = SessionLocal()
 
     try:
-
-        user = db.query(User).filter(
-            User.telegram_id == data.telegram_id
-        ).first()
+        user = (
+            db.query(User)
+            .filter(User.telegram_id == data.telegram_id)
+            .first()
+        )
 
         if user is None:
-
             user = User(
                 telegram_id=data.telegram_id,
                 first_name="Mehmon",
@@ -428,10 +283,7 @@ def start_game(data: GameStartRequest):
             mode=data.mode,
             category=data.category,
             difficulty=data.difficulty,
-            question_count=max(
-                0,
-                data.question_count
-            ),
+            question_count=max(0, data.question_count),
             answered=0,
             correct=0,
             score=0,
@@ -452,19 +304,19 @@ def start_game(data: GameStartRequest):
 
 
 # =========================
-# GAME FINISH
+# FINISH GAME
 # =========================
 
 @app.post("/api/game/finish")
 def finish_game(data: GameFinishRequest):
-
     db = SessionLocal()
 
     try:
-
-        game = db.query(Game).filter(
-            Game.id == data.game_id
-        ).first()
+        game = (
+            db.query(Game)
+            .filter(Game.id == data.game_id)
+            .first()
+        )
 
         if game is None:
             raise HTTPException(
@@ -481,12 +333,13 @@ def finish_game(data: GameFinishRequest):
         game.score = max(0, data.score)
         game.correct = max(0, data.correct)
         game.answered = max(0, data.answered)
-
         game.finished_at = datetime.now(timezone.utc)
 
-        user = db.query(User).filter(
-            User.telegram_id == data.telegram_id
-        ).first()
+        user = (
+            db.query(User)
+            .filter(User.telegram_id == data.telegram_id)
+            .first()
+        )
 
         if user is None:
             raise HTTPException(
@@ -518,18 +371,143 @@ def finish_game(data: GameFinishRequest):
 
 
 # =========================
+# QUESTIONS
+# =========================
+
+@app.get("/api/questions")
+def get_questions(
+    count: int = 10,
+    category: Optional[str] = None,
+    difficulty: Optional[str] = None
+):
+    count = max(1, min(count, 100))
+
+    db = SessionLocal()
+
+    try:
+        query = db.query(Question)
+
+        if category:
+            query = query.filter(
+                Question.category == category
+            )
+
+        if difficulty:
+            query = query.filter(
+                Question.difficulty == difficulty
+            )
+
+        questions = (
+            query
+            .order_by(func.random())
+            .limit(count)
+            .all()
+        )
+
+        result = []
+
+        for q in questions:
+            result.append({
+                "id": q.id,
+                "question": q.question,
+                "options": {
+                    "a": q.option_a,
+                    "b": q.option_b,
+                    "c": q.option_c,
+                    "d": q.option_d
+                },
+                "correct_answer": q.correct_answer,
+                "difficulty": q.difficulty,
+                "category": q.category
+            })
+
+        return {
+            "ok": True,
+            "count": len(result),
+            "items": result
+        }
+
+    finally:
+        db.close()
+
+
+# =========================
+# CATEGORIES
+# =========================
+
+@app.get("/api/questions/categories")
+def get_question_categories():
+    db = SessionLocal()
+
+    try:
+        rows = (
+            db.query(Question.category)
+            .filter(Question.category.isnot(None))
+            .distinct()
+            .all()
+        )
+
+        categories = [
+            row[0]
+            for row in rows
+            if row[0]
+        ]
+
+        categories.sort()
+
+        return {
+            "ok": True,
+            "items": categories
+        }
+
+    finally:
+        db.close()
+
+
+# =========================
+# DIFFICULTIES
+# =========================
+
+@app.get("/api/questions/difficulties")
+def get_question_difficulties():
+    db = SessionLocal()
+
+    try:
+        rows = (
+            db.query(Question.difficulty)
+            .filter(Question.difficulty.isnot(None))
+            .distinct()
+            .all()
+        )
+
+        difficulties = [
+            row[0]
+            for row in rows
+            if row[0]
+        ]
+
+        difficulties.sort()
+
+        return {
+            "ok": True,
+            "items": difficulties
+        }
+
+    finally:
+        db.close()
+
+
+# =========================
 # LEADERBOARD
 # =========================
 
 @app.get("/api/leaderboard")
 def leaderboard(limit: int = 20):
-
     limit = max(1, min(limit, 100))
 
     db = SessionLocal()
 
     try:
-
         users = (
             db.query(User)
             .filter(User.best_score > 0)
@@ -540,11 +518,7 @@ def leaderboard(limit: int = 20):
 
         result = []
 
-        for position, user in enumerate(
-            users,
-            start=1
-        ):
-
+        for position, user in enumerate(users, start=1):
             result.append({
                 "position": position,
                 "telegram_id": user.telegram_id,
@@ -564,19 +538,19 @@ def leaderboard(limit: int = 20):
 
 
 # =========================
-# USER STATISTICS
+# GET USER
 # =========================
 
 @app.get("/api/user/{telegram_id}")
 def get_user(telegram_id: int):
-
     db = SessionLocal()
 
     try:
-
-        user = db.query(User).filter(
-            User.telegram_id == telegram_id
-        ).first()
+        user = (
+            db.query(User)
+            .filter(User.telegram_id == telegram_id)
+            .first()
+        )
 
         if user is None:
             return {
